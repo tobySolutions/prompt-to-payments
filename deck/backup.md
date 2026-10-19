@@ -212,12 +212,12 @@ Our test suite tries this exact attack: create a 2.50 order, then pay 0.50 for i
     <Who by="fixed" />
 
 ```ts
-getAddMemoInstruction({ memo: order.id })
+getAddMemoInstruction({ memo: order.memo }) // "mamaput:<order>:<item>"
 ```
 
 ```ts
 const memoOk = ixs.some(ix =>
-  ix.program === 'spl-memo' && ix.parsed === order.id)
+  ix.program === 'spl-memo' && ix.parsed === memoFor(order))
 ```
   </div>
 </div>
@@ -275,7 +275,7 @@ const tx = await rpc
 if (tx.meta?.err) return fail('Transaction failed on-chain')
 
 const memoOk = tx.transaction.message.instructions
-  .some(ix => ix.program === 'spl-memo' && ix.parsed === order.id)
+  .some(ix => ix.program === 'spl-memo' && ix.parsed === memoFor(order))
 if (!memoOk) return fail('Memo does not match this order')
 
 // Merchant's balance of THIS mint must rise by the full price
@@ -321,7 +321,7 @@ Then the replay guard on top (previous slide).
 </style>
 
 <!--
-This ran on 19 Oct 2026 against devnet: `node scripts/e2e.ts` in the app folder, with `npm run dev` running. All 7 checks pass (creating the order is the 7th). Sample real payment: https://explorer.solana.com/tx/3xuCXcRpqA5RJf9EGbz4qinTMN5toWXXdBHi8zUqiU5zYD5V2wz3BwnfNi3B2wzCLFyYuRLAUKMcBK3UdNxSmF5K?cluster=devnet
+This ran on 19 Oct 2026 against devnet: `node scripts/e2e.ts` in the app folder, with `npm run dev` running. All 10 checks pass, including an edited signed order and the kitchen view. Sample real payment: https://explorer.solana.com/tx/3xuCXcRpqA5RJf9EGbz4qinTMN5toWXXdBHi8zUqiU5zYD5V2wz3BwnfNi3B2wzCLFyYuRLAUKMcBK3UdNxSmF5K?cluster=devnet
 
 The script uses a CLI keypair instead of a browser wallet, so it exercises the same instruction builder (lib/pay.ts) and the same API routes.
 

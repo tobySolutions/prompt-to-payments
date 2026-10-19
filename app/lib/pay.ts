@@ -9,11 +9,14 @@ import { getAddMemoInstruction } from '@solana-program/memo'
 
 export type OrderDTO = {
   id: string
+  item: string
   amount: string // base units, as a string because JSON has no bigint
   mint: string
   tokenProgram: string
   decimals: number
   recipient: string
+  memo: string // "mamaput:<order id>:<item>"
+  token: string // the server's signed copy of this order
 }
 
 export async function buildPayment(order: OrderDTO, payer: TransactionSigner) {
@@ -33,6 +36,6 @@ export async function buildPayment(order: OrderDTO, payer: TransactionSigner) {
       { programAddress: tokenProgram },
     ),
     // Ties this payment to exactly one order.
-    getAddMemoInstruction({ memo: order.id }),
+    getAddMemoInstruction({ memo: order.memo }),
   ]
 }

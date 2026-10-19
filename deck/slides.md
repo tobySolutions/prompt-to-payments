@@ -370,10 +370,10 @@ clicks: 7
   { id: 'c', label: 'Solana', tone: 'chain' },
 ]" :steps="[
   { from: 'b', to: 's', label: 'POST /orders { item: jollof }' },
-  { from: 's', to: 'b', label: 'order id, price, mint, merchant', tone: 'ok' },
+  { from: 's', to: 'b', label: 'signed order: id, price, mint, merchant', tone: 'ok' },
   { from: 'b', to: 'w', label: 'sign: create + transferChecked + memo', tone: 'ai' },
   { from: 'w', to: 'c', label: 'send transaction', tone: 'chain' },
-  { from: 'b', to: 's', label: 'POST /orders/:id/verify { signature }' },
+  { from: 'b', to: 's', label: 'POST /verify { order, signature }' },
   { from: 's', to: 'c', label: 'getTransaction(signature)', tone: 'chain' },
   { from: 's', to: 's', label: 'checks pass → order paid', tone: 'ok' },
 ]" />
@@ -466,6 +466,7 @@ node scripts/e2e.ts
 
   <p v-click class="fs-md mt-6">Real devnet payments. Same routes the browser uses.</p>
   <p v-click class="fs-md ok">Ask your AI to write the attacks, then make them fail.</p>
+  <p v-click class="fs-md">Watch them bounce on <span class="mono chain">mamaput-lagos.vercel.app/kitchen</span></p>
   </div>
   <Receipt title="e2e.ts · devnet" stamp="ALL PASS" :lines="[
     ['real payment verifies', 'PASS', 'ok'],
@@ -474,6 +475,7 @@ node scripts/e2e.ts
     ['client sends its own price', 'ignored', 'ok'],
     ['unknown menu item', 'refused', 'ok'],
     ['pay 0.50 for a 2.50 order', 'refused', 'ok'],
+    ['edit the signed order', 'refused', 'ok'],
   ]" />
 </div>
 
@@ -482,7 +484,7 @@ node scripts/e2e.ts
 </style>
 
 <!--
-Run it live in the reference app folder: `npm run dev` in one terminal, `node scripts/e2e.ts` in another. It pays on devnet with your CLI wallet (~/.config/solana/id.json) and tries five attacks. All 7 checks passed on 19 Oct 2026.
+Run it live in the reference app folder: `npm run dev` in one terminal, `node scripts/e2e.ts` in another. It pays on devnet with your CLI wallet (~/.config/solana/id.json) and tries six attacks, then checks the kitchen. All 10 checks passed on 19 Oct 2026. Keep the kitchen screen open on the projector while it runs: the underpaid order shows up red and the refusals list fills.
 
 The receipt on the slide is the fallback if the network dies mid-demo.
 
@@ -565,10 +567,11 @@ where: Terminal · x402/
 
 # Pay for a proverb
 
+<p class="fs-md">Open <span class="mono chain">mamaput-lagos.vercel.app/agent</span> and press <b>Run the agent</b>. Or in a terminal:</p>
+
 ```bash
-npm run server                          # paid API on :4021
-curl -i localhost:4021/proverb          # 402 + PAYMENT-REQUIRED
-npm run agent                           # signs $0.001 USDC, retries, gets the proverb
+curl -i https://mamaput-x402.vercel.app/proverb   # 402 + PAYMENT-REQUIRED
+npm run agent                                     # in x402/: signs $0.001 USDC, retries, gets the proverb
 ```
 
 <div class="see">
@@ -590,7 +593,7 @@ Live in x402/. Three terminal commands; the clicks are what to point at on scree
 - The agent's wallet needs devnet USDC but no SOL. The x402.org facilitator pays the fee.
 - The merchant (PAY_TO) must already have a devnet USDC token account. The x402 Solana scheme doesn't let the payer create one.
 
-STATUS (19 Oct 2026): server and the 402 response tested. The paid retry was failing only because the agent wallet had 0 devnet USDC. TOBI: fund it and run this once before the day.
+STATUS (19 Oct 2026): the hosted service (mamaput-x402.vercel.app) and the hosted agent page are live and tested up to step 4. The paid retry fails only because the hosted agent wallet 9MKM8N5ZaFDhFave7SR2uS4cBHjURCXemJHdEQYSXP1k has 0 devnet USDC. TOBI: fund it at faucet.circle.com and press Run once before the day.
 
 Fallback slides with the decoded JSON, the server code and the agent code are in the backup deck (`npm run backup`, localhost:3031).
 -->
@@ -669,6 +672,7 @@ layout: cover
 
 <p class="mono fs-sm">Slides, reference app, AI first draft, x402 service, checklist</p>
 <p class="chain mono fs-md">github.com/tobySolutions/prompt-to-payments</p>
+<p class="mono fs-sm">Live demo: mamaput-lagos.vercel.app</p>
 <p class="muted fs-sm" style="margin-top:1rem">@toby_solutions · tobySolutions.dev</p>
 
 ::right::

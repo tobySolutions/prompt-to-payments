@@ -3,7 +3,7 @@ import { fetchEncodedAccount } from '@solana/kit'
 import { TOKEN_PROGRAM_ADDRESS, getMintDecoder } from '@solana-program/token'
 import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022'
 import { MENU, MERCHANT_WALLET, USDC_MINT, rpc, type MenuItem } from '@/lib/config'
-import { createOrder, toJSON } from '@/lib/orders'
+import { createOrder } from '@/lib/orders'
 
 // The client only says WHAT it wants. Price, mint and recipient come from here.
 export async function POST(req: Request) {
@@ -25,5 +25,5 @@ export async function POST(req: Request) {
     decimals: getMintDecoder().decode(mint.data).decimals,
     recipient: MERCHANT_WALLET,
   })
-  return NextResponse.json(toJSON(order))
+  return NextResponse.json(order)
 }

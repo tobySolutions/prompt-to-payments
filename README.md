@@ -8,10 +8,13 @@ an API per request with x402.
 |---|---|
 | `deck/` | Slidev slides with speaker notes. `npm i && npm run dev` (22 slides). Fallback slides: `npm run backup` |
 | `ai-first-draft/` | What an AI assistant produced from the workshop prompt, unedited. Read it, don't ship it. |
-| `app/` | The reviewed checkout ("Mama Put"): server-set prices, memo per order, on-chain verification, replay guard. |
+| `app/` | The reviewed checkout ("Mama Put"): Shop, a Kitchen screen that reads paid orders from Solana, and an Agent page that drives x402. Server-signed orders, memo per order, on-chain verification. |
 | `x402/` | A paid API (`GET /proverb`, $0.001 in devnet USDC) and an agent that pays it. |
+| `design/` | Pen.dev design (`blockfest-demo.pen`) and PNGs of every screen and state |
 | `CHECKLIST.md` | The ship checklist from the last slides. |
 | `deck/prompt-to-payments.pdf` / `.pptx` | The slides as PDF and PowerPoint (speaker notes included in the .pptx) |
+
+**Live:** slides https://prompt-to-payments.vercel.app · shop https://mamaput-lagos.vercel.app (Shop, Kitchen, Agent · x402) · paid API https://mamaput-x402.vercel.app/proverb
 
 Devnet only. Nothing here has been audited.
 
@@ -22,7 +25,7 @@ cd app
 npm i
 cp .env.example .env.local   # set MERCHANT_WALLET (a public address)
 npm run dev                  # http://localhost:3000, needs Phantom/Solflare/Backpack on devnet
-node scripts/e2e.ts          # with dev running: pays on devnet with ~/.config/solana/id.json and tries 6 attacks
+node scripts/e2e.ts          # with dev running: pays on devnet with ~/.config/solana/id.json, tries 6 attacks, checks the kitchen (10 checks)
 ```
 
 Stack: `@solana/kit` 8.4, `@solana/kit-plugin-wallet` 0.20, `@solana/react` 8.4,

@@ -1,111 +1,152 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useConnect, useConnectedWallet, useDisconnect, useWallets, WalletReadyGate } from '@solana/kit-plugin-wallet/react'
+import { useState } from 'react'
+import { useConnectedWallet } from '@solana/kit-plugin-wallet/react'
 import { client } from './providers'
 import { buildPayment, type OrderDTO } from '@/lib/pay'
+import { BALANCE_EVENT } from '@/lib/use-balance'
 
 const MENU = [
-  { id: 'jollof', name: 'Jollof rice + chicken', price: '2.50' },
-  { id: 'suya', name: 'Suya, one stick', price: '1.00' },
-  { id: 'zobo', name: 'Zobo, chilled', price: '0.50' },
-] // display only; the server decides the real price
+  { id: 'jollof', name: 'Jollof rice + chicken', desc: 'Smoky party jollof, fried plantain on the side', price: '2.50' },
+  { id: 'suya', name: 'Suya, one stick', desc: 'Spicy beef, onions, yaji', price: '1.00' },
+  { id: 'zobo', name: 'Zobo, chilled', desc: 'Hibiscus, ginger, pineapple', price: '0.50' },
+] // display only; the server sets the real price
 
-type Step = { kind: 'idle' } | { kind: 'busy'; label: string } | { kind: 'paid'; sig: string } | { kind: 'error'; msg: string }
+type Phase = 'idle' | 'order' | 'sign' | 'chain' | 'verify' | 'paid' | 'error'
+const STEPS: { phase: Phase; title: string }[] = [
+  { phase: 'order', title: 'Order created by the server' },
+  { phase: 'sign', title: 'Approve in your wallet' },
+  { phase: 'chain', title: 'Landing on Solana' },
+  { phase: 'verify', title: 'Checked by the server' },
+]
+const ORDER: Phase[] = ['order', 'sign', 'chain', 'verify', 'paid']
+const fmt = (base: string) => (Number(base) / 1e6).toFixed(2) // display only
 
-function Wallet() {
-  const wallets = useWallets(client)
+export default function Shop() {
   const connected = useConnectedWallet(client)
-  const { dispatch: connect } = useConnect(client)
-  const { dispatch: disconnect } = useDisconnect(client)
-
-  if (connected) {
-    const a = connected.account.address
-    return (
-      <section className="wallet">
-        <span className="mono">{a.slice(0, 4)}…{a.slice(-4)}</span>
-        <button onClick={() => disconnect()}>Disconnect</button>
-      </section>
-    )
-  }
-  return (
-    <section className="wallet">
-      {wallets.length === 0 && <span className="muted">No Solana wallet found. Install Phantom, Solflare or Backpack.</span>}
-      {wallets.map(w => (
-        <button key={w.name} onClick={() => connect(w)}>Connect {w.name}</button>
-      ))}
-    </section>
-  )
-}
-
-export default function Page() {
-  const connected = useConnectedWallet(client)
-  const [step, setStep] = useState<Step>({ kind: 'idle' })
-  // Wallets only exist in the browser, so render that part after mount.
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-  const lookingForWallets = <section className="wallet muted">Looking for wallets…</section>
+  const [active, setActive] = useState<string | null>(null)
+  const [phase, setPhase] = useState<Phase>('idle')
+  const [failedAt, setFailedAt] = useState<Phase | null>(null)
+  const [error, setError] = useState('')
+  const [order, setOrder] = useState<OrderDTO | null>(null)
+  const [sig, setSig] = useState('')
+  const busy = !['idle', 'paid', 'error'].includes(phase)
 
   async function pay(item: string) {
+    setActive(item); setError(''); setSig(''); setOrder(null); setFailedAt(null)
+    let at: Phase = 'order'
+    const go = (p: Phase) => { at = p; setPhase(p) }
     try {
-      setStep({ kind: 'busy', label: 'Creating order' })
+      go('order')
       const res = await fetch('/api/orders', { method: 'POST', body: JSON.stringify({ item }) })
-      const order = (await res.json()) as OrderDTO & { error?: string }
-      if (!res.ok) throw new Error(order.error)
+      const o = (await res.json()) as OrderDTO & { error?: string }
+      if (!res.ok) throw new Error(o.error)
+      setOrder(o)
 
-      setStep({ kind: 'busy', label: 'Approve in your wallet' })
-      const instructions = await buildPayment(order, client.payer)
-      const result = await client.sendTransaction(instructions)
-      const sig = result.context.signature
+      go('sign')
+      const instructions = await buildPayment(o, client.payer)
+      const pending = client.sendTransaction(instructions)
+      // The wallet prompt resolves into "sent"; after that we're waiting on the chain.
+      go('chain')
+      const result = await pending
+      const s = result.context.signature
+      setSig(s)
 
-      // The server checks the chain itself. Retry while its RPC catches up.
-      setStep({ kind: 'busy', label: 'Checking the payment on-chain' })
+      go('verify')
       for (let i = 0; i < 8; i++) {
-        const v = await fetch(`/api/orders/${order.id}/verify`, { method: 'POST', body: JSON.stringify({ signature: sig }) })
-        if (v.ok) return setStep({ kind: 'paid', sig })
-        const { error } = (await v.json()) as { error: string }
-        if (v.status !== 402 || !error.startsWith('Transaction not found')) throw new Error(error)
+        const v = await fetch('/api/verify', { method: 'POST', body: JSON.stringify({ token: o.token, signature: s }) })
+        const body = (await v.json()) as { error?: string }
+        if (v.ok) {
+          setPhase('paid')
+          window.dispatchEvent(new Event(BALANCE_EVENT))
+          return
+        }
+        if (v.status !== 402 || !body.error?.startsWith('Transaction not found')) throw new Error(body.error)
         await new Promise(r => setTimeout(r, 1500))
       }
-      throw new Error('Payment not seen on-chain yet. Check the explorer.')
+      throw new Error('The payment was sent but the server has not seen it yet. Check the explorer, then try again.')
     } catch (e) {
-      setStep({ kind: 'error', msg: e instanceof Error ? e.message : String(e) })
+      setFailedAt(at)
+      setPhase('error')
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(/reject|denied|cancel/i.test(msg) ? 'You cancelled in your wallet. Nothing was paid.' : msg)
     }
   }
 
+  const stepState = (p: Phase) => {
+    if (phase === 'error') return p === failedAt ? 'fail' : ORDER.indexOf(p) < ORDER.indexOf(failedAt!) ? 'done' : ''
+    const i = ORDER.indexOf(phase), j = ORDER.indexOf(p)
+    return i > j ? 'done' : i === j ? 'now' : ''
+  }
+
+  const detail = (p: Phase) => {
+    if (!order) return ''
+    if (p === 'order') return `${order.id} · ${fmt(order.amount)} USDC`
+    if (p === 'sign') return 'create account · transferChecked · memo'
+    if (p === 'chain') return sig ? `${sig.slice(0, 8)}…${sig.slice(-6)}` : 'sending…'
+    if (p === 'verify') return phase === 'paid' ? 'memo ✓  mint ✓  amount ✓' : 'fetching the transaction…'
+    return ''
+  }
+
   return (
-    <main className="shell">
-      <header>
-        <h1>Mama Put</h1>
-        <p className="muted">Pay with USDC on Solana devnet</p>
-      </header>
+    <main className="page">
+      <h1 className="title">What are you eating today?</h1>
+      <p className="sub">The kitchen&apos;s server sets the price. You pay in USDC on Solana devnet.</p>
 
-      {mounted ? (
-        <WalletReadyGate client={client} fallback={lookingForWallets}>
-          <Wallet />
-        </WalletReadyGate>
-      ) : lookingForWallets}
+      <div className="split">
+        <section className="items" aria-label="Menu">
+          {MENU.map(m => (
+            <div key={m.id} className={`item ${active === m.id && phase !== 'idle' ? 'active' : ''}`}>
+              <div className="txt">
+                <div className="name">{m.name}</div>
+                <div className="desc">{m.desc}</div>
+              </div>
+              <span className="price">{m.price} USDC</span>
+              <button className="btn primary" disabled={!connected || busy} onClick={() => pay(m.id)}>
+                {busy && active === m.id ? 'Paying…' : 'Pay'}
+              </button>
+            </div>
+          ))}
+          {!connected && <p className="muted">Connect a wallet on devnet (top right) to pay.</p>}
+        </section>
 
-      <ul className="menu">
-        {MENU.map(m => (
-          <li key={m.id}>
-            <span className="name">{m.name}</span>
-            <span className="price">{m.price} USDC</span>
-            <button disabled={!connected || step.kind === 'busy'} onClick={() => pay(m.id)}>Pay</button>
-          </li>
-        ))}
-      </ul>
-
-      <p className={`status ${step.kind}`} aria-live="polite">
-        {step.kind === 'busy' && step.label}
-        {step.kind === 'error' && step.msg}
-        {step.kind === 'paid' && (
-          <>
-            Paid and verified on-chain.{' '}
-            <a href={`https://explorer.solana.com/tx/${step.sig}?cluster=devnet`} target="_blank" rel="noreferrer">View transaction</a>
-          </>
-        )}
-      </p>
+        <aside aria-live="polite">
+          <p className="panel-label">Your order</p>
+          {phase === 'idle' ? (
+            <div className="empty"><b>Nothing ordered yet</b>Pick something on the left.</div>
+          ) : (
+            <>
+              {phase === 'error' && (
+                <div className="alert"><b>Payment not accepted</b>{error}</div>
+              )}
+              <div className="steps">
+                {STEPS.map(s => (
+                  <div key={s.phase} className={`step on ${stepState(s.phase)}`}>
+                    <i>{stepState(s.phase) === 'done' ? '✓' : stepState(s.phase) === 'fail' ? '!' : ''}</i>
+                    <div><b>{s.title}</b><span>{detail(s.phase)}</span></div>
+                  </div>
+                ))}
+              </div>
+              {phase === 'paid' && order && (
+                <div className="receipt">
+                  <h3>MAMA PUT · LEKKI</h3>
+                  <hr />
+                  <div className="r"><span>{MENU.find(m => m.id === order.item)?.name}</span><b>{fmt(order.amount)} USDC</b></div>
+                  <div className="r"><span>Order</span><b>{order.id}</b></div>
+                  <div className="r"><span>Network</span><b className="blue">Solana devnet</b></div>
+                  <div className="r"><span>Verified by</span><b className="green">the server</b></div>
+                  <hr />
+                  <div className="foot">
+                    <a href={`https://explorer.solana.com/tx/${sig}?cluster=devnet`} target="_blank" rel="noreferrer">View on explorer ↗</a>
+                    <span className="stamp">PAID</span>
+                  </div>
+                </div>
+              )}
+              {phase === 'error' && <button className="btn" onClick={() => setPhase('idle')}>Start a new order</button>}
+            </>
+          )}
+        </aside>
+      </div>
     </main>
   )
 }
