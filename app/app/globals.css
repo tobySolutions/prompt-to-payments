@@ -1,0 +1,35 @@
+:root {
+  --bg: #10131a;
+  --surface: #191b23;
+  --line: #424754;
+  --text: #e1e2ec;
+  --muted: #9aa0ad;
+  --accent: #adc6ff;
+  --ok: #7ee2a8;
+  --bad: #ffb4ab;
+
+  /* One type scale. Headings are fluid, body is fixed. */
+  --fs-sm: 14px;
+  --fs-base: 16px;
+  --fs-md: 18px;
+  --fs-title: clamp(28px, 5vw, 44px);
+  --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: var(--fs-base)/1.5 ui-sans-serif, system-ui, sans-serif; }
+.shell { max-width: 640px; margin: 0 auto; padding: 48px 16px; }
+h1 { font-size: var(--fs-title); margin: 0; letter-spacing: -0.02em; }
+.muted { color: var(--muted); margin: 4px 0 0; }
+.mono { font-family: var(--mono); }
+button { font: inherit; font-size: var(--fs-sm); font-weight: 600; background: var(--accent); color: #0b0e15; border: 0; border-radius: 4px; padding: 8px 14px; cursor: pointer; }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+.wallet { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 28px 0; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; }
+.menu { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.menu li { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px; border: 1px solid var(--line); border-radius: 4px; }
+.menu .name { flex: 1 1 12rem; min-width: 10rem; font-size: var(--fs-md); }
+.menu .price { font-family: var(--mono); color: var(--accent); }
+.status { min-height: 1.5em; margin-top: 20px; }
+.status.paid { color: var(--ok); }
+.status.error { color: var(--bad); }
+.status a { color: var(--accent); }

@@ -1,0 +1,22 @@
+{
+  "name": "x402-proverbs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "server": "node --env-file=.env src/server.ts",
+    "agent": "node --env-file=.env src/agent.ts"
+  },
+  "dependencies": {
+    "@solana/kit": "5.5.1",
+    "@types/express": "5.0.6",
+    "@x402/core": "2.28.0",
+    "@x402/express": "2.28.0",
+    "@x402/fetch": "2.28.0",
+    "@x402/svm": "2.28.0",
+    "express": "5.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^5.9.3"
+  }
+}

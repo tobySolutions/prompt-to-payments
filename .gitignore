@@ -1,0 +1,11 @@
+node_modules
+.next
+dist
+.env
+.env.local
+*.tsbuildinfo
+next-env.d.ts
+keys/
+*.pdf
+!deck/prompt-to-payments.pdf
+!deck/prompt-to-payments-backup.pdf
