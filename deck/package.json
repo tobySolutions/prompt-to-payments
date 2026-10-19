@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "slidev slides.md --open",
-    "build": "slidev build slides.md --out dist/deck --base /deck/ && slidev build backup.md --out dist/backup --base /backup/",
+    "build": "slidev build slides.md --out dist --base / && slidev build backup.md --out dist/backup --base /backup/",
     "export": "slidev export slides.md --output prompt-to-payments.pdf --timeout 120000 && slidev export backup.md --output prompt-to-payments-backup.pdf --timeout 120000",
     "check:type": "node scripts/check-type-scale.mjs",
     "backup": "slidev backup.md --port 3031"

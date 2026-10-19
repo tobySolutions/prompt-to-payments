@@ -9,3 +9,5 @@ keys/
 *.pdf
 !deck/prompt-to-payments.pdf
 !deck/prompt-to-payments-backup.pdf
+.DS_Store
+.vercel

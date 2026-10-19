@@ -1,0 +1,5 @@
+node_modules
+dist
+*.pdf
+*.pptx
+slides-full-45.md
