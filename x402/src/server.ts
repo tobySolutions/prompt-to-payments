@@ -30,10 +30,15 @@ app.use((req, res, next) => {
 })
 
 // Runs the agent once against our own paid endpoint and returns every step.
-// One run at a time, so a room full of clicks can't drain the agent's wallet.
+// One run at a time per server process. On Vercel each instance has its own
+// flag, so parallel runs can still happen; the agent's spend limit caps each one.
+// Set RUN_AGENT_ENABLED=false to switch this endpoint off.
 let running = false
 app.post('/run-agent', async (_req, res) => {
-  if (running) return res.status(429).json({ ok: false, error: 'The agent is already running. Try again in a few seconds.' })
+  if (process.env.RUN_AGENT_ENABLED === 'false') {
+    return res.status(503).json({ ok: false, steps: [], error: 'The agent is switched off right now.' })
+  }
+  if (running) return res.status(429).json({ ok: false, steps: [], error: 'The agent is already running. Try again in a few seconds.' })
   running = true
   try {
     res.json(await runAgent(`${process.env.PUBLIC_URL ?? 'http://localhost:4021'}/proverb`))

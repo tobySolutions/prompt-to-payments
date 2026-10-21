@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 
 type Step = { n: number; title: string; detail: string; tone: 'http' | 'bug' | 'ai' | 'chain' | 'ok' }
-type Run = { ok: boolean; steps: Step[]; proverb?: string; tx?: string; error?: string }
+type Run = { ok: boolean; steps?: Step[]; proverb?: string; tx?: string; error?: string }
 
 // The x402 service (x402/ in the repo). Locally: npm run server on :4021.
 const X402 = process.env.NEXT_PUBLIC_X402_URL ?? 'http://localhost:4021'
@@ -21,7 +21,7 @@ export default function Agent() {
 
   // Reveal the recorded steps one by one, so the room can follow the wire.
   useEffect(() => {
-    if (!run || shown >= run.steps.length) return
+    if (!run || shown >= (run.steps ?? []).length) return
     const t = setTimeout(() => setShown(s => s + 1), 650)
     return () => clearTimeout(t)
   }, [run, shown])
@@ -39,7 +39,7 @@ export default function Agent() {
     }
   }
 
-  const done = run && shown >= run.steps.length
+  const done = run && shown >= (run.steps ?? []).length
   const color = (t: Step['tone']) => `var(--${t})`
   const why = (e?: string) =>
     e?.includes('simulation_failed')
@@ -67,7 +67,7 @@ export default function Agent() {
         <section className="timeline" aria-live="polite">
           {!run && !busy && <div className="empty"><b>Nothing yet</b>Press “Run the agent” to watch one paid request, step by step.</div>}
           {busy && [0, 1, 2].map(i => <div key={i} className="tl"><div className="skel" style={{ height: 30, borderRadius: '50%' }} /><div style={{ display: 'grid', gap: 8 }}><div className="skel" /><div className="skel" style={{ width: '60%' }} /></div></div>)}
-          {run?.steps.slice(0, shown).map(s => (
+          {(run?.steps ?? []).slice(0, shown).map(s => (
             <div key={s.n} className={`tl ${s.tone === 'ok' ? 'final' : ''}`}>
               <span className="n" style={{ color: color(s.tone) }}>{s.n}</span>
               <div>
