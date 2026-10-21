@@ -2,6 +2,9 @@
   "name": "x402-proverbs",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
   "scripts": {
     "server": "node --env-file=.env src/server.ts",
     "agent": "node --env-file=.env src/agent.ts",

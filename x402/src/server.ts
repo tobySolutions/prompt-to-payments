@@ -7,7 +7,11 @@ import { ExactSvmScheme } from '@x402/svm/exact/server'
 import { agentInfo, runAgent } from './run-agent.ts'
 
 const SOLANA_DEVNET = 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1' // CAIP-2 id, not "solana-devnet"
-const PAY_TO = process.env.PAY_TO! // a wallet that already has a devnet USDC token account
+const PAY_TO = process.env.PAY_TO ?? '' // a wallet that already has a devnet USDC token account
+if (!PAY_TO.trim()) {
+  console.error('PAY_TO is empty. Set it in x402/.env to your merchant wallet address (it needs a devnet USDC token account).')
+  process.exit(1)
+}
 
 // The facilitator checks the signed payment and submits it. x402.org is free,
 // needs no key, and is testnet only. It also pays the SOL fee.

@@ -1,6 +1,7 @@
 // End-to-end check against a running `npm run dev`, using a CLI keypair in place
 // of a browser wallet. Same instruction builder and server routes as the app.
 // usage: node scripts/e2e.ts [path/to/keypair.json]
+// env: BASE (default http://localhost:3000), SOLANA_RPC_URL, SOLANA_WS_URL. The keypair must not be MERCHANT_WALLET.
 import { readFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import {
@@ -12,8 +13,11 @@ import { getAddMemoInstruction } from '@solana-program/memo'
 import { buildPayment, type OrderDTO } from '../lib/pay.ts'
 
 const BASE = process.env.BASE ?? 'http://localhost:3000'
-const rpc = createSolanaRpc('https://api.devnet.solana.com')
-const rpcSubscriptions = createSolanaRpcSubscriptions('wss://api.devnet.solana.com')
+// Same env var as the app's server. WS defaults to the RPC URL with http(s) swapped for ws(s).
+const RPC_URL = process.env.SOLANA_RPC_URL ?? 'https://api.devnet.solana.com'
+const WS_URL = process.env.SOLANA_WS_URL ?? RPC_URL.replace(/^http/, 'ws')
+const rpc = createSolanaRpc(RPC_URL)
+const rpcSubscriptions = createSolanaRpcSubscriptions(WS_URL)
 const keyPath = process.argv[2] ?? `${homedir()}/.config/solana/id.json`
 const payer = await createKeyPairSignerFromBytes(new Uint8Array(JSON.parse(readFileSync(keyPath, 'utf8'))))
 
