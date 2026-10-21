@@ -2,12 +2,12 @@
 // What changed on Solana in the weeks before this workshop. One per click.
 withDefaults(defineProps<{ step?: number }>(), { step: 99 })
 const items = [
-  { when: 'Jul', what: "Solana Foundation's AI dev skill: don't start new apps on framework-kit or wallet-adapter", old: 'Our AI first draft still used wallet-adapter' },
-  { when: 'Sep', what: 'Rent cut, first 2 of 5 steps', old: 'A token account now costs 0.00148844 SOL, not the 0.00203928 in older code and docs' },
-  { when: '15 Sep', what: 'v1 transactions on mainnet', old: 'getTransaction without maxSupportedTransactionVersion: 1 errors on them' },
+  { when: 'Jul', what: 'Foundation AI skill: no wallet-adapter', old: 'Not for new apps. Our AI first draft still used it' },
+  { when: 'Sep', what: 'Rent cut, first 2 of 5 steps', old: 'Token account: 0.00148844 SOL, not 0.00203928' },
+  { when: '15 Sep', what: 'v1 transactions on mainnet', old: 'getTransaction needs maxSupportedTransactionVersion: 1' },
   { when: '9 Oct', what: 'Slots 400 ms → 200 ms', old: 'A blockhash now expires in ~30 s, not ~60 s' },
   { when: '19 Oct', what: '@solana/web3.js latest is v3', old: 'npm i @solana/web3.js installs a new API. v1 code must pin ^1.x' },
-  { when: '21 Oct', what: 'Alpenglow live on mainnet', old: 'Finality target ~150 ms, down from ~12.8 s. Confirmed and finalized now describe the same state' },
+  { when: '21 Oct', what: 'Alpenglow live on mainnet', old: 'Target ~150 ms, was ~12.8 s. Confirmed and finalized: same state' },
 ]
 </script>
 

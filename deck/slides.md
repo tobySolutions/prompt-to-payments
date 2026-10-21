@@ -372,7 +372,7 @@ clicks: 7
   { id: 'w', label: 'Wallet', tone: 'ai' },
   { id: 'c', label: 'Solana', tone: 'chain' },
 ]" :steps="[
-  { from: 'b', to: 's', label: 'POST /orders { item: jollof }' },
+  { from: 'b', to: 's', label: 'POST /api/orders { item: jollof }' },
   { from: 's', to: 'b', label: 'signed order: id, price, mint, merchant', tone: 'ok' },
   { from: 'b', to: 'w', label: 'sign: create + transferChecked + memo', tone: 'ai' },
   { from: 'w', to: 'c', label: 'send transaction', tone: 'chain' },
@@ -479,7 +479,7 @@ node scripts/e2e.ts
     ['unknown menu item', 'refused', 'ok'],
     ['pay 0.50 for a 2.50 order', 'refused', 'ok'],
     ['edit the signed order', 'refused', 'ok'],
-    ['one payment, three order memos', 'refused', 'ok'],
+    ['one payment, three memos', 'refused', 'ok'],
   ]" />
 </div>
 

@@ -305,7 +305,7 @@ Then the replay guard on top (previous slide).
     ['client sends its own price', 'ignored', 'ok'],
     ['unknown menu item', 'refused', 'ok'],
     ['pay 0.50 for a 2.50 order', 'refused', 'ok'],
-    ['one payment, three order memos', 'refused', 'ok'],
+    ['one payment, three memos', 'refused', 'ok'],
   ]" />
   <div>
     <p v-click class="fs-lg">Real devnet transactions (a 6-decimal test token standing in for USDC).</p>
