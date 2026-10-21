@@ -22,7 +22,7 @@
 **Not verified yet**
 - A paid x402 USDC run end to end.
 - The shop and the AI first draft clicked through with a real Phantom wallet.
-- Deploys: nothing on this branch is deployed; the live sites still run the 19 Oct code.
+- Deploys: nothing on this branch has been deployed.
 
 ## 19 Oct 2026
 
