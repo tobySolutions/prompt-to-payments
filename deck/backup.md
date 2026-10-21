@@ -48,8 +48,6 @@ Everything below was in the original 45-slide version: the bug-by-bug code slide
 Keep this under a minute. One line each.
 
 The third column is the thesis of the session: AI makes me faster, and the speed is only safe because I know what to check. That is what you're here to get.
-
-TOBI: confirm these titles before the 22nd. Your Solana Foundation SDP role ends on the 21st, so it is deliberately not listed as current.
 -->
 ---
 
@@ -67,9 +65,9 @@ TOBI: confirm these titles before the 22nd. Your Solana Foundation SDP role ends
     <cite>Chainalysis, 2024 Sub-Saharan Africa report</cite>
   </div>
   <div v-click>
-    <b class="ai">~$15.5B</b>
-    <span>Stablecoins on Solana today. USDC is $6.8B of it</span>
-    <cite>DefiLlama, 19 Oct 2026</cite>
+    <b class="ai">~$15.8B</b>
+    <span>Stablecoins on Solana today. USDC is $7.0B of it</span>
+    <cite>DefiLlama, 21 Oct 2026</cite>
   </div>
 </div>
 
@@ -82,11 +80,11 @@ TOBI: confirm these titles before the 22nd. Your Solana Foundation SDP role ends
 </style>
 
 <!--
-Sources, all checked 19 Oct 2026:
+Sources, checked 19 to 21 Oct 2026:
 - Chainalysis 2026 Global Crypto Adoption Index, published 23 Sep 2026: Nigeria #3 (Brazil #1, USA #2), South Africa #9. https://www.chainalysis.com/blog/2026-global-crypto-adoption-index/
 - The 43% stablecoin share is from the 2024 Sub-Saharan Africa report (Jul 2023 to Jun 2024), NOT 2025. People often mis-date it. The same report: Nigeria took about 40% of the region's stablecoin inflows. https://www.chainalysis.com/blog/subsaharan-africa-crypto-adoption-2024/
 - Chainalysis 2025: the region received over $205B on-chain, up about 52%; Nigeria over $92.1B. Use this if asked for a newer volume number.
-- DefiLlama, 19 Oct 2026: about $15.5B stablecoins on Solana, 3rd chain after Ethereum and Tron. USDC $6.79B, USDT $2.69B, PYUSD $0.68B.
+- DefiLlama, 21 Oct 2026: ~$15.8B stablecoins on Solana, USDC $7.0B of it. (On 19 Oct it was 3rd chain after Ethereum and Tron.)
 
 Say: "Nobody here needs convincing that dollars on a phone matter. Today is about building it properly."
 -->
@@ -97,7 +95,7 @@ Say: "Nobody here needs convincing that dollars on a phone matter. Today is abou
 <div class="rl">
   <div v-click class="big"><b class="bug">100</b><span>requests per 10 s, <strong>per IP</strong>, on the public devnet RPC</span></div>
   <div v-click class="big"><b class="bug">40</b><span>per 10 s for any single method</span></div>
-  <div v-click class="fix"><b class="ok">Use the workshop RPC URL</b><span>Put it in <code>NEXT_PUBLIC_SOLANA_RPC_URL</code>. It's browser-visible, so it must be origin-restricted.</span></div>
+  <div v-click class="fix"><b class="ok">Use your own RPC key</b><span>Put it in <code>NEXT_PUBLIC_SOLANA_RPC_URL</code>. It's browser-visible, so it must be origin-restricted.</span></div>
 </div>
 
 <style>
@@ -196,7 +194,7 @@ In the first draft the amount is a constant in client code. Anyone can change it
 
 In the reviewed version prices live on the server as bigint base units (app/lib/config.ts). The client sends only an item id. The server creates the order with the price, and at verify time it compares what actually moved on-chain with what it asked for.
 
-Our test suite tries this exact attack: create a 2.50 order, then pay 0.50 for it. The server answers 402 "Merchant received 500000 base units, expected 2500000".
+Our test suite tries this exact attack: create a 2.50 order, then pay 0.50 for it. The server answers 402 "Merchant received 500000 base units, this order costs 2500000".
 -->
 ---
 
@@ -216,6 +214,7 @@ getAddMemoInstruction({ memo: order.memo }) // "mamaput:<order>:<item>"
 ```
 
 ```ts
+// app/lib/verify.ts, simplified
 const memoOk = ixs.some(ix =>
   ix.program === 'spl-memo' && ix.parsed === memoFor(order))
 ```
@@ -230,7 +229,7 @@ const memoOk = ixs.some(ix =>
 <!--
 Without an order id on the payment you can only match by amount and time, and that breaks the moment two people buy the same thing.
 
-The fix: put the server's order id in an SPL Memo instruction. On verify, the server only accepts a transaction whose memo equals this order's id (app/lib/verify.ts check 3).
+The fix: put the server's order id in an SPL Memo instruction. On verify, the server only accepts a transaction with exactly one order memo, equal to this order's (app/lib/verify.ts check 3). The real code also refuses a payment that carries memos for several orders, so one payment can't mark three orders paid.
 
 The other standard approach is a Solana Pay "reference": a random public key added as a read-only account on the transfer, which you can look up with getSignaturesForAddress. Either works.
 
@@ -258,40 +257,38 @@ Replay: one real payment, submitted as proof for a second order. If your verify 
 
 Two defences in the reference app:
 1. The memo must equal this order's id, so a payment for #A1 can't verify #B7.
-2. markPaid() refuses a signature it has already seen (app/lib/orders.ts). In production that's a UNIQUE constraint on the signature column, inside the same database transaction that marks the order paid.
+2. claimSignature() (app/lib/orders.ts) remembers which order each signature paid; the verify route returns 409 if the same signature is offered for a different order. In production that's a UNIQUE constraint on the signature column, inside the same database transaction that marks the order paid.
 
-The signature 3xuC…mF5K is a real devnet payment from our test run on 19 Oct 2026.
+The signature 3xuC…mF5K is a real devnet transaction from our 19 Oct 2026 test run. It used a 6-decimal test token standing in for USDC and an older UUID memo.
 -->
 ---
 
 # The whole check, in four rules
 
-```ts {1-4|6|8-10|12-17|all}{maxHeight:'420px'}
-// app/lib/verify.ts
+```ts {1-4|6|8-9|11-14|all}{maxHeight:'420px'}
+// app/lib/verify.ts, simplified
 const tx = await rpc
   .getTransaction(sig, { commitment: 'confirmed', encoding: 'jsonParsed', maxSupportedTransactionVersion: 1 })
   .send()
 
 if (tx.meta?.err) return fail('Transaction failed on-chain')
 
-const memoOk = tx.transaction.message.instructions
-  .some(ix => ix.program === 'spl-memo' && ix.parsed === memoFor(order))
-if (!memoOk) return fail('Memo does not match this order')
+const ours = memosOf(tx).filter(isOrderMemo) // every "mamaput:" memo
+if (ours.length !== 1 || ours[0] !== memoFor(order)) return fail('Wrong memo')
 
-// Merchant's balance of THIS mint must rise by the full price
-const isMerchantUsdc = b => b.mint === order.mint && b.owner === order.recipient
-const before = sum(pre.filter(isMerchantUsdc))
-const after = sum(post.filter(isMerchantUsdc))
-if (after - before < order.amount) return fail('Underpaid')
+// Merchant's balance of THIS mint must rise by the full price (post minus pre)
+const got = received(tx, order.mint, order.recipient)
+if (got < order.amount) return fail(`Merchant received ${got} base units`)
 return ok()
 ```
 
 <!--
-Lightly trimmed from app/lib/verify.ts so it fits. Each click is one rule.
+Simplified from app/lib/verify.ts so it fits (the real file returns objects and has fuller error messages). Each click is one rule.
 
 1. Fetch it ourselves, at "confirmed", and allow v1 transactions. Without maxSupportedTransactionVersion: 1, a v1 transaction makes getTransaction error. For big amounts, use "finalized"; after Alpenglow they're the same thing anyway.
 2. It succeeded. A failed transaction still has a signature, and AI code often forgets that.
-3. Memo equals this order's id.
+3. Exactly one order memo, and it equals this order's. A payment naming several orders is refused.
+   Consequence: paying yourself fails. If payer and merchant are the same wallet, post minus pre is 0.
 4. The merchant's balance of THIS mint went up by at least the price. Checking pre/post token balances instead of instruction arguments works for both token programs, and catches transfers made inside another program. Checking the mint matters: anyone can create a token called "USDC".
 
 Then the replay guard on top (previous slide).
@@ -308,9 +305,10 @@ Then the replay guard on top (previous slide).
     ['client sends its own price', 'ignored', 'ok'],
     ['unknown menu item', 'refused', 'ok'],
     ['pay 0.50 for a 2.50 order', 'refused', 'ok'],
+    ['one payment, three order memos', 'refused', 'ok'],
   ]" />
   <div>
-    <p v-click class="fs-lg">Real devnet transactions.</p>
+    <p v-click class="fs-lg">Real devnet transactions (a 6-decimal test token standing in for USDC).</p>
     <p v-click class="fs-lg">Same routes the browser uses.</p>
     <p v-click class="fs-lg ok">Write the attack, then the fix.</p>
   </div>
@@ -321,7 +319,7 @@ Then the replay guard on top (previous slide).
 </style>
 
 <!--
-This ran on 19 Oct 2026 against devnet: `node scripts/e2e.ts` in the app folder, with `npm run dev` running. All 10 checks pass, including an edited signed order and the kitchen view. Sample real payment: https://explorer.solana.com/tx/3xuCXcRpqA5RJf9EGbz4qinTMN5toWXXdBHi8zUqiU5zYD5V2wz3BwnfNi3B2wzCLFyYuRLAUKMcBK3UdNxSmF5K?cluster=devnet
+`node scripts/e2e.ts` in the app folder, with `npm run dev` running, against devnet: 13 checks in app/scripts/e2e.ts, ALL PASS on 21 Oct 2026, including an edited signed order, one payment carrying three order memos, and the kitchen view. Sample transaction from the 19 Oct run (a 6-decimal test token standing in for USDC, older UUID memo): https://explorer.solana.com/tx/3xuCXcRpqA5RJf9EGbz4qinTMN5toWXXdBHi8zUqiU5zYD5V2wz3BwnfNi3B2wzCLFyYuRLAUKMcBK3UdNxSmF5K?cluster=devnet
 
 The script uses a CLI keypair instead of a browser wallet, so it exercises the same instruction builder (lib/pay.ts) and the same API routes.
 
@@ -353,7 +351,7 @@ A transaction is valid only until its blockhash expires: 150 blocks, which is ~3
 
 The draft lets the wallet adapter put one blockhash in, then fetches a later one and confirms against that. If the transaction is dropped, the code keeps waiting past the real expiry, and the user may pay again: a double charge risk.
 
-The reviewed app uses @solana/kit's client.sendTransaction, which plans, signs, sends and confirms with one lifetime and throws a clear BLOCK_HEIGHT_EXCEEDED if it expires. Production rule from solana.com/docs/payments/production-readiness: store the signature before sending, and reconcile before re-signing.
+The reviewed app uses @solana/kit's client.sendTransaction, which plans, signs, sends and confirms with one lifetime and throws a clear BLOCK_HEIGHT_EXCEEDED if it expires. solana.com/docs/payments/production-readiness says "Store the lastValidBlockHeight returned by getLatestBlockhash". Resubmitting the same signed transaction is safe; re-signing with a new blockhash makes a new transaction, so check the old signature's status first.
 -->
 ---
 
@@ -426,9 +424,9 @@ Fairness: web3.js v1 code still runs. This is about what you start a new project
 
 Facts (19 Oct 2026):
 - github.com/solana-foundation/solana-dev-skill, references/frontend.md (line present since commit 43233c0, 14 Jul 2026; re-checked in v2.7.0 on 19 Oct): "Do not use @solana/client / @solana/react-hooks (framework-kit) for new work — that stack is stale... Do not use @solana/wallet-adapter-* for new apps either; Wallet Standard discovery covers modern wallets."
-- npm: @solana/web3.js "latest" is 1.99.0 and "next" is 3.1.0. v3 is a different API rebuilt on Kit. If "latest" moves to 3.x, `npm i @solana/web3.js` will install a different major from the one AI-written code assumes.
+- npm: @solana/web3.js "latest" moved to 3.1.1 on 19 Oct 2026, so `npm i @solana/web3.js` now installs v3, a different API rebuilt on Kit. AI-written v1 code must pin ^1.x (the draft pinned ^1.98.0 and got 1.99.0).
 - web3.js v1 can read v1 transactions but can't build them.
-- Next.js 16.3 is current stable; the draft pinned ^15.1.
+- Next.js 16.4 is current stable (16.4.2); the draft pinned ^15.1 (got 15.5.28); the reference app is on 16.3.8.
 
 Funny but true: while building the reference app for this talk, I first used framework-kit because my own local copy of that AI skill was months stale. I found out from the research, and I switched. The AI tools need reviewing too.
 
@@ -545,11 +543,12 @@ From x402/src/server.ts in the repo, lightly trimmed. Packages: @x402/core, @x40
 
 # The agent: wrap fetch
 
-```ts {all|1-2|4|5|7-8|all}
+```ts {all|2,4|3|6|8-9|all}
+// x402/src/run-agent.ts, trimmed
 const client = new x402Client()
+client.setSpendControls({ maxAmountPerPayment: '$0.01' })
 client.register('solana:*', new ExactSvmScheme(signer))
 
-client.setSpendControls({ maxAmountPerPayment: '$0.01' })
 const paidFetch = wrapFetchWithPayment(fetch, client)
 
 const res = await paidFetch('http://localhost:4021/proverb')
@@ -559,13 +558,13 @@ console.log(await res.json()) // { proverb: 'Rain does not fall on one roof alon
 <p v-click class="fs-md mt-5">The budget line matters. <b class="ai">An agent with a wallet and no limit is a liability.</b></p>
 
 <!--
-From x402/src/agent.ts. `signer` is a @solana/kit KeyPairSigner loaded from a devnet keypair file.
+Trimmed from x402/src/run-agent.ts (x402/src/agent.ts is the CLI wrapper). `signer` is a @solana/kit KeyPairSigner loaded from a devnet keypair file. The spend limit is set before the scheme is registered, as in the real code.
 
 wrapFetchWithPayment does the dance from the sequence slide: see the 402, pick a matching option, sign, retry with PAYMENT-SIGNATURE.
 
 setSpendControls comes straight from the official fetch example. Ask the room what happens without it if a malicious API returns a 402 for $500. With a budget guard the client refuses to sign.
 
-TOBI: run `npm run server` and `npm run agent` in x402/ live if the Wi-Fi allows. The agent wallet needs devnet USDC (not SOL). As of 19 Oct the server side and the 402 were tested; the paid retry was waiting on faucet USDC (see README).
+Live option: `npm run server` and `npm run agent` in x402/ if the Wi-Fi allows. The agent wallet needs devnet USDC (not SOL). As of 19 Oct the server side and the 402 were tested; the paid retry was waiting on faucet USDC (see README).
 -->
 ---
 
@@ -633,7 +632,7 @@ The point: libraries in one ecosystem move at different speeds. Read the error. 
   </div>
   <div v-click>
     <b class="chain">76%</b>
-    <span>of x402 transactions run on Solana, 22 Aug to 19 Sep 2026: 23.2M. Solana's figure, citing Artemis.</span>
+    <span>of x402 transactions run on Solana, 22 Aug to 19 Sep 2026: 23.2M. solana.com, Sep 2026 payments recap.</span>
   </div>
 </div>
 
@@ -648,7 +647,7 @@ The point: libraries in one ecosystem move at different speeds. Read the error. 
 Sources (checked 19 Oct 2026):
 - Linux Foundation press release, 2 Apr 2026: "Linux Foundation is Launching the x402 Foundation and Welcoming the Contribution of the x402 Protocol". "The x402 protocol, created by Coinbase... The x402 Foundation... initially developed by Coinbase, Cloudflare, and Stripe". The Solana Foundation quote in it says Solana is "driving nearly 65% of x402 transaction volume this year".
 - 14 Jul 2026, operational launch: "40 organizations have joined as members". Premier members include Adyen, AWS, American Express, Circle, Cloudflare, Coinbase, Fiserv, Google, Mastercard, Monad Foundation, MoonPay, Ripple, Shopify, Solana Foundation, Stellar Development Foundation, Stripe, Visa.
-- @solana on X, 22 Sep 2026: "Solana handles 76% of all @x402 transactions. 23.2M in four weeks. The next-largest network did 3.39M." Chart: 22 Aug to 19 Sep 2026, source Artemis. Present it as Solana's claim citing Artemis, not independent.
+- solana.com, Sep 2026 payments recap: Solana handled 76% of x402 transactions, 23.2M in four weeks (22 Aug to 19 Sep 2026); the next-largest network did 3.39M. Present it as Solana's own figure, not an independent one.
 
 Do NOT quote the "165M transactions / $50M volume" figures floating around; no primary source was found.
 -->
