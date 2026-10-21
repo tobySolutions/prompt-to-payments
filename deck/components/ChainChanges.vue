@@ -6,7 +6,8 @@ const items = [
   { when: 'Sep', what: 'Rent cut, first 2 of 5 steps', old: 'A token account now costs 0.00148844 SOL, not the 0.00203928 in older code and docs' },
   { when: '15 Sep', what: 'v1 transactions on mainnet', old: 'getTransaction without maxSupportedTransactionVersion: 1 errors on them' },
   { when: '9 Oct', what: 'Slots 400 ms → 200 ms', old: 'A blockhash now expires in ~30 s, not ~60 s' },
-  { when: '21 Oct', what: 'Alpenglow on mainnet', old: 'Finality target ~150 ms. "confirmed" and "finalized" become the same thing' },
+  { when: '19 Oct', what: '@solana/web3.js latest is v3', old: 'npm i @solana/web3.js installs a new API. v1 code must pin ^1.x' },
+  { when: '21 Oct', what: 'Alpenglow live on mainnet', old: 'Finality target ~150 ms, down from ~12.8 s. Confirmed and finalized now describe the same state' },
 ]
 </script>
 

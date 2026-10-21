@@ -32,6 +32,8 @@ Timing: 90 minutes total. Walk-in music, this slide up while people find seats a
 Say: "By the end of this session you'll have built a stablecoin payment app with an AI assistant, and you'll know exactly why the first version the AI gives you is not safe to ship. Then we make an API that charges per request, in USDC, with no checkout page."
 
 Ask people to open their laptops now and join the Wi-Fi. Setup is the first thing we do.
+
+Before you come (also at the top of the README): `git clone https://github.com/tobySolutions/prompt-to-payments && cd prompt-to-payments/app && npm i`. Say it again for anyone still installing: it saves the room's Wi-Fi.
 -->
 ---
 
@@ -65,8 +67,6 @@ Ask people to open their laptops now and join the Wi-Fi. Setup is the first thin
 
 Facts match tobysolutions.dev/resume (checked 19 Oct 2026): Senior Technical Lead at Boh since Sep 2026 (EKGO! for 500+ restaurants across California); Software Engineer, Solana Foundation, Solana Developer Platform, Jul to Oct 2026; co-founder of Solana Students Africa; Solana Turbine Q4 2025 graduate; DevRel Engineer at Fleek and Gaia AI; Million.js contributor (Million.js has 16K+ GitHub stars).
 
-TOBI: your Solana Foundation role ends on 21 Oct, the day before the talk. Say "I was at the Solana Foundation on the Solana Developer Platform" (past tense). Check you're happy saying "500+ restaurants" for Boh on stage; it's already on your public resume.
-
 Photo: your GitHub avatar, saved locally so it works offline.
 -->
 
@@ -81,7 +81,7 @@ Photo: your GitHub avatar, saved locally so it works offline.
   <div v-click class="x"><b>4</b><span>x402</span><em>Let an agent pay your API per request.</em><i>20 min</i></div>
 </div>
 
-<p v-click class="fs-md ink-soft mt-8">About 70 of the 90 minutes are hands-on.</p>
+<p v-click class="fs-md ink-soft mt-8">About half of the 90 minutes is hands-on.</p>
 
 <style>
 .plan { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 2rem; }
@@ -105,13 +105,13 @@ Timing: 90 minutes. Build 15, Break 20, Fix 25, x402 20, checklist and questions
 # Get these before we prompt
 
 <div class="setup">
-  <div v-click><span class="n">1</span><b>A wallet</b><span>Phantom, Solflare or Backpack. Switch it to <b class="chain">devnet</b>.</span></div>
+  <div v-click><span class="n">1</span><b>A wallet</b><span>Phantom, Solflare or Backpack on <b class="chain">devnet</b>. Add a second account: that one is your shop.</span></div>
   <div v-click><span class="n">2</span><b>Devnet SOL</b><span><code>faucet.solana.com</code> · 2 requests per 8 hours</span></div>
-  <div v-click><span class="n">3</span><b>Devnet USDC</b><span><code>faucet.circle.com</code> · Solana Devnet · 20 USDC, once per 2 hours</span></div>
-  <div v-click><span class="n">4</span><b>Node 24 + an AI assistant</b><span>Claude Code, Cursor, Copilot, any of them</span></div>
+  <div v-click><span class="n">3</span><b>Devnet USDC</b><span><code>faucet.circle.com</code> · Solana Devnet · 20 USDC every 2 hours, per address, per blockchain</span></div>
+  <div v-click><span class="n">4</span><b>Node + an AI assistant</b><span>Node 22.18+ (24 recommended) · Claude Code, Cursor, Copilot, any</span></div>
 </div>
 
-<Callout v-click tone="warn" title="Faucet down or rate limited?" class="mt-6">Raise your hand. I have pre-funded devnet wallets and a workshop RPC URL.</Callout>
+<Callout v-click tone="warn" title="Faucet down?" class="mt-6">Pair with a neighbour, or use <span class="mono">mamaput-lagos.vercel.app</span>.</Callout>
 
 <style>
 .setup { display: grid; gap: 0.7rem; margin-top: 1.2rem; }
@@ -124,10 +124,12 @@ Timing: 90 minutes. Build 15, Break 20, Fix 25, x402 20, checklist and questions
 <!--
 Checked 19 Oct 2026:
 - faucet.solana.com: "Maximum of 2 requests every 8 hours". GitHub sign-in is optional and raises the limit.
-- faucet.circle.com: pick USDC, network "Solana Devnet". 20 USDC per request. "One request per pairing of asset and test network every 2 hours". No account needed. It uses reCAPTCHA, so it can't be scripted.
+- faucet.circle.com: pick USDC, network "Solana Devnet". 20 USDC every 2 hours, per address, per blockchain. No account needed. It uses reCAPTCHA, so it can't be scripted.
 - Devnet USDC mint: 4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU (classic Token program, 6 decimals, read on-chain).
 
-BEFORE THE DAY: fund 20 or so throwaway devnet wallets with SOL and USDC from your own wallet, so a faucet failure doesn't stall the room. Circle limits you to 20 USDC every 2 hours per address, so start a day early and spread it across several addresses.
+Wallet setup: people need TWO accounts, a customer and a shop. Paying yourself fails on purpose: the server checks the merchant's balance went up by the price, and if payer and merchant are the same wallet it goes up by 0. Phantom devnet: Settings -> Developer Settings -> Testnet Mode -> Solana Devnet. Add the second account from the account switcher.
+
+If spare devnet wallets were funded the night before, say so here and hand them out. Otherwise: pair with a neighbour, or use the hosted shop at mamaput-lagos.vercel.app.
 
 Give people 5 to 8 minutes here. Walk the room.
 -->
@@ -137,7 +139,7 @@ clicks: 2
 
 # Open your AI tool. Paste this.
 
-<PromptBox class="mt-6" :typed="$clicks >= 1" text="Build a Next.js app where a customer connects a Solana wallet and pays 2.50 USDC on devnet for a jollof rice order. Show a success message when they've paid. The merchant wallet is <your wallet address>." />
+<PromptBox class="mt-6" :typed="$clicks >= 1" text="Build a Next.js app where a customer connects a Solana wallet and pays 2.50 USDC on devnet for a jollof rice order. Show a success message when they've paid. The merchant wallet is <your second account's address>." />
 
 <div class="go mt-8">
   <Countdown :minutes="10" :run="$clicks >= 2" />
@@ -151,14 +153,16 @@ clicks: 2
 <!--
 Click 1 types the prompt. Click 2 starts a 10-minute timer (click the timer itself to pause it).
 
-This is deliberately a normal, slightly lazy prompt. It's what people actually type. They should put their own wallet address as the merchant, so they can see the money arrive.
+This is deliberately a normal, slightly lazy prompt. It's what people actually type. They should put their SECOND account's address as the merchant, so they can see the money arrive. Paying from and to the same account shows a balance change of 0 and the reviewed app refuses it.
+
+Say: "Your AI's mint should be 4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU. Anything else is bug #0." 
 
 While they work, build it yourself on the projector in a fresh folder, live, with your own AI tool. If your live build stalls (Wi-Fi, rate limits), switch to the pre-built one: `cd ai-first-draft && npm run dev`.
 
 Walk the room. Common snags:
 - Wallet on mainnet instead of devnet: balances show 0.
-- No devnet USDC: faucet.circle.com, or hand out a pre-funded wallet.
-- 429 errors: public devnet RPC rate limit, shared by everyone on the hotel Wi-Fi. Give out the workshop RPC URL.
+- No devnet USDC: faucet.circle.com, or pair with a neighbour.
+- 429 errors: public devnet RPC rate limit, shared by everyone on the venue Wi-Fi. Retry, or use your own RPC key in SOLANA_RPC_URL / NEXT_PUBLIC_SOLANA_RPC_URL.
 
 People will get different stacks from different assistants. Good: the review works on all of them.
 -->
@@ -195,7 +199,7 @@ Ask the room: "Whose works? Whose shows the success message?" Most hands go up.
 
 Then: "Good. Now let's find out if it's right."
 
-TOBI: verified so far: the draft passes `tsc --noEmit` and `next build`. Nobody has clicked through it with a real Phantom wallet yet. Do that once before the day (`cd ai-first-draft && npm run dev`, wallet on devnet with USDC) so you can say "it works" from experience.
+Verified so far: the draft passes `tsc --noEmit` and `next build`. A click-through with a real Phantom wallet is not verified yet; do it before presenting (`cd ai-first-draft && npm run dev`, wallet on devnet with USDC) before saying "it works" from experience.
 -->
 ---
 layout: section
@@ -310,7 +314,7 @@ What it got wrong is the money part: who decides an order is paid, who sets the 
 That's the main lesson: the AI answers the prompt you wrote, not the system you need.
 -->
 ---
-clicks: 5
+clicks: 6
 ---
 
 # Changed since your AI was trained
@@ -318,14 +322,13 @@ clicks: 5
 <ChainChanges :step="$clicks" />
 
 <!--
-All checked 19 Oct 2026 against solana.com and the chain itself:
+Checked 19 to 21 Oct 2026 against solana.com, npm and the chain itself:
 - Rent: SIMD-0437 cuts lamports-per-byte from 6,960 to 696 in five steps. Steps 1 and 2 hit mainnet in September 2026; steps 3 to 5 are expected with Agave 4.4 in November. Measured today: a token account costs 1,488,440 lamports. https://solana.com/upgrades/reduced-rent
 - v1 transactions (4,096 bytes) live on mainnet since 15 Sep 2026. Server code calling getTransaction without maxSupportedTransactionVersion: 1 errors on them.
-- 200 ms slots on mainnet since 9 Oct 2026. Blockhash still lasts 150 blocks, which is now ~30 s instead of ~60 s. Measured mainnet slot time today: 0.214 to 0.225 s. https://solana.com/upgrades/reduced-slot-times
-- Since 14 Jul 2026 (commit 43233c0, still in v2.7.0 checked 19 Oct): the Solana Foundation's dev skill for AI agents (github.com/solana-foundation/solana-dev-skill) says "Do not use @solana/client / @solana/react-hooks (framework-kit) or @solana/wallet-adapter-* for new work."
-- Alpenglow activates on mainnet at epoch 1064, Wed 21 Oct 2026 ~15:00 UTC: yesterday, from the room's point of view. Target finality ~150 ms, down from ~12.8 s. "confirmed and finalized become the same thing." https://solana.com/upgrades/alpenglow
-
-TOBI: on the morning of the 22nd, check that Alpenglow actually activated (the feature account A1pengvuM6JEcyNuTnMqepBKhwHE3N6PmUrdATGawhJS should be owned by the Feature program, not System). If it slipped, change the last line to "scheduled".
+- 200 ms slots on mainnet since 9 Oct 2026. Blockhash still lasts 150 blocks, which is now ~30 s instead of ~60 s. Measured mainnet slot time 21 Oct: ~0.21 s. https://solana.com/upgrades/reduced-slot-times
+- Since 14 Jul 2026 (commit 43233c0, still in v2.7.0 checked 19 Oct): the Solana Foundation's dev skill for AI agents (github.com/solana-foundation/solana-dev-skill) says "Do not use @solana/client / @solana/react-hooks (framework-kit) for new work — that stack is stale... Do not use @solana/wallet-adapter-* for new apps either; Wallet Standard discovery covers modern wallets."
+- @solana/web3.js: npm "latest" moved to 3.1.1 on 19 Oct 2026, so `npm i @solana/web3.js` now installs v3, a different API rebuilt on Kit. AI-written v1 code must pin ^1.x (the draft pinned ^1.98.0 and got 1.99.0).
+- Alpenglow went LIVE on mainnet at the start of epoch 1064, Wed 21 Oct 2026 ~13:36 UTC (consensus handoff ~13:54 UTC): yesterday, from the room's point of view. Finality target ~150 ms, down from ~12.8 s. solana.com: "confirmed and finalized now describe the same state." 150 ms is the target, not yet a measured number. https://solana.com/upgrades/alpenglow
 
 Say: "Every model in this room was trained before at least one of these. That's not the model's fault. It's why you review."
 -->
@@ -353,7 +356,7 @@ True story from preparing this workshop (19 Oct 2026). While building the refere
 
 It was caught because the official package exports the constant: TOKEN_2022_PROGRAM_ADDRESS = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb".
 
-Had it shipped, the server's "is this mint owned by a token program?" check would have rejected every Token-2022 mint, or worse, in other code, sent funds to an address nobody controls.
+The made-up string is 52 characters, so it isn't even a valid key. Had it shipped, the server's mint-owner check would have rejected every Token-2022 mint. A plausible 43-character typo is worse: it parses fine and points at an account nobody controls.
 
 Rule: addresses, mints and program ids come from an official package, an env var you set yourself, or the chain. Never from the model's memory.
 -->
@@ -373,7 +376,7 @@ clicks: 7
   { from: 's', to: 'b', label: 'signed order: id, price, mint, merchant', tone: 'ok' },
   { from: 'b', to: 'w', label: 'sign: create + transferChecked + memo', tone: 'ai' },
   { from: 'w', to: 'c', label: 'send transaction', tone: 'chain' },
-  { from: 'b', to: 's', label: 'POST /verify { order, signature }' },
+  { from: 'b', to: 's', label: 'POST /api/verify { token, signature }' },
   { from: 's', to: 'c', label: 'getTransaction(signature)', tone: 'chain' },
   { from: 's', to: 's', label: 'checks pass → order paid', tone: 'ok' },
 ]" />
@@ -382,14 +385,14 @@ clicks: 7
 Click through each arrow.
 
 1. The browser says only WHAT it wants: an item.
-2. The server answers with everything that matters: a fresh order id, the price in base units, the mint, the merchant address, the token program. The client can't choose any of these.
+2. The server answers with everything that matters: a fresh order id, the price in base units, the mint, the merchant address, the token program, signed into a token. The client can't change any of these.
 3. The browser builds the three instructions and the wallet signs.
 4. The transaction goes to Solana.
-5. The browser hands the server the signature. That's just a pointer; the server trusts nothing about it.
+5. The browser hands the server the signed order token and the signature. The signature is just a pointer; the server trusts nothing about it.
 6. The server fetches that transaction from its own RPC.
 7. The server runs its checks. Only then is the order paid.
 
-This is the reference app: app/lib/verify.ts and app/app/api/orders/.
+This is the reference app: app/lib/verify.ts, app/app/api/orders/ and app/app/api/verify/.
 -->
 ---
 
@@ -422,7 +425,7 @@ clicks: 6
 <div class="tasks">
   <div v-click><span>1</span><p>Add an <code>/api/orders</code> route. The server sets the price.</p></div>
   <div v-click><span>2</span><p>Put the order id in a memo</p></div>
-  <div v-click><span>3</span><p>Add <code>/verify</code>: fetch the tx, it succeeded, memo matches, merchant got paid</p></div>
+  <div v-click><span>3</span><p>Add <code>/api/verify</code>: fetch the tx, it succeeded, memo matches, merchant got paid</p></div>
   <div v-click><span>4</span><p>Refuse a signature you've already used</p></div>
   <div v-click class="stuck"><span>?</span><p>Stuck? <code>app/</code> in the repo is the reviewed version</p></div>
 </div>
@@ -440,7 +443,7 @@ clicks: 6
 <!--
 Hands-on, 15 minutes (the 6th click starts the timer). People should use their AI assistant. The point is that now they know what to ask for and what to check.
 
-A good prompt to give the room: "Move the price to the server. Add POST /api/orders that returns an order id, price in base units, mint and merchant. Add the order id as an SPL memo. Add POST /api/orders/:id/verify that fetches the transaction with getTransaction and checks it succeeded, the memo matches, and the merchant's USDC balance rose by the full price. Refuse a signature that was already used."
+A good prompt to give the room: "Move the price to the server. Add POST /api/orders that returns an order id, price in base units, mint and merchant. Add the order id as an SPL memo. Add POST /api/verify that takes { token, signature }, fetches the transaction with getTransaction and checks it succeeded, the memo matches, and the merchant's USDC balance rose by the full price. Refuse a signature that was already used."
 
 You fix it live on screen at the same time, or open app/lib/verify.ts and walk through the four checks.
 
@@ -464,9 +467,9 @@ npm run dev
 node scripts/e2e.ts
 ```
 
-  <p v-click class="fs-md mt-6">Real devnet payments. Same routes the browser uses.</p>
+  <p v-click class="fs-md mt-6">Real devnet transactions (a 6-decimal test token standing in for USDC). Same routes the browser uses.</p>
   <p v-click class="fs-md ok">Ask your AI to write the attacks, then make them fail.</p>
-  <p v-click class="fs-md">Watch them bounce on <span class="mono chain">mamaput-lagos.vercel.app/kitchen</span></p>
+  <p v-click class="fs-md">Watch them bounce on <span class="mono chain">localhost:3000/kitchen</span></p>
   </div>
   <Receipt title="e2e.ts · devnet" stamp="ALL PASS" :lines="[
     ['real payment verifies', 'PASS', 'ok'],
@@ -476,6 +479,7 @@ node scripts/e2e.ts
     ['unknown menu item', 'refused', 'ok'],
     ['pay 0.50 for a 2.50 order', 'refused', 'ok'],
     ['edit the signed order', 'refused', 'ok'],
+    ['one payment, three order memos', 'refused', 'ok'],
   ]" />
 </div>
 
@@ -484,7 +488,7 @@ node scripts/e2e.ts
 </style>
 
 <!--
-Run it live in the reference app folder: `npm run dev` in one terminal, `node scripts/e2e.ts` in another. It pays on devnet with your CLI wallet (~/.config/solana/id.json) and tries six attacks, then checks the kitchen. All 10 checks passed on 19 Oct 2026. Keep the kitchen screen open on the projector while it runs: the underpaid order shows up red and the refusals list fills.
+Run it live in the reference app folder: `npm run dev` in one terminal, `node scripts/e2e.ts` in another. It pays on devnet with your CLI wallet (~/.config/solana/id.json, which must not be the MERCHANT_WALLET) and tries eight attacks, then checks the kitchen: 13 checks in app/scripts/e2e.ts, ALL PASS on 21 Oct 2026. Set SOLANA_RPC_URL (and SOLANA_WS_URL) to use your own RPC. Keep localhost:3000/kitchen open on the projector while it runs: the underpaid order shows up red and the refusals list fills. Refusals are kept per server instance, so the hosted kitchen won't show your local run.
 
 The receipt on the slide is the fallback if the network dies mid-demo.
 
@@ -545,7 +549,7 @@ clicks: 8
 ]" />
 
 <!--
-x402 v2 (spec dated 2025-12-09, specs/transports-v2/http.md in the x402-foundation repo). Default "authorization" flow:
+x402 v2 (specs/x402-specification-v2.md, v2.0 dated 9 Dec 2025; headers in specs/transports-v2/http.md, x402-foundation repo). Default "authorization" flow:
 
 1. Agent calls the API like normal.
 2. API answers 402 with a PAYMENT-REQUIRED header (base64 JSON): what it costs, which token, which network, who to pay.
@@ -571,7 +575,8 @@ where: Terminal · x402/
 
 ```bash
 curl -i https://mamaput-x402.vercel.app/proverb   # 402 + PAYMENT-REQUIRED
-npm run agent                                     # in x402/: signs $0.001 USDC, retries, gets the proverb
+cd x402 && npm i && cp .env.example .env
+API_URL=https://mamaput-x402.vercel.app/proverb npm run agent
 ```
 
 <div class="see">
@@ -587,13 +592,14 @@ npm run agent                                     # in x402/: signs $0.001 USDC,
 </style>
 
 <!--
-Live in x402/. Three terminal commands; the clicks are what to point at on screen.
+Live in x402/. The clicks are what to point at on screen.
 
-- `curl -i` shows the 402 and the PAYMENT-REQUIRED header (base64 JSON). Decode it for the room: `curl -s -D - localhost:4021/proverb -o /dev/null | grep -i payment-required | cut -d' ' -f2 | tr -d '\r' | base64 -d`
+- `curl -i` shows the 402 and the PAYMENT-REQUIRED header (base64 JSON). Windows: use `curl.exe -i`. Decode it for the room: `curl -si https://mamaput-x402.vercel.app/proverb | grep -i '^payment-required:' | cut -d' ' -f2 | tr -d '\r' | base64 -d`
+- The agent signs $0.001 USDC, retries and gets the proverb. It needs a Solana CLI keypair (~/.config/solana/id.json, or AGENT_KEYPAIR_PATH) with devnet USDC. No CLI? Use mamaput-lagos.vercel.app/agent. PowerShell: `$env:API_URL="https://mamaput-x402.vercel.app/proverb"; npm run agent`
 - The agent's wallet needs devnet USDC but no SOL. The x402.org facilitator pays the fee.
 - The merchant (PAY_TO) must already have a devnet USDC token account. The x402 Solana scheme doesn't let the payer create one.
 
-STATUS (19 Oct 2026): the hosted service (mamaput-x402.vercel.app) and the hosted agent page are live and tested up to step 4. The paid retry fails only because the hosted agent wallet 9MKM8N5ZaFDhFave7SR2uS4cBHjURCXemJHdEQYSXP1k has 0 devnet USDC. TOBI: fund it at faucet.circle.com and press Run once before the day.
+STATUS (19 Oct 2026): the hosted service (mamaput-x402.vercel.app) and the hosted agent page are live and tested up to step 4. The paid retry needs devnet USDC in the hosted agent wallet 9MKM8N5ZaFDhFave7SR2uS4cBHjURCXemJHdEQYSXP1k. Check it has some and press Run once before presenting.
 
 Fallback slides with the decoded JSON, the server code and the agent code are in the backup deck (`npm run backup`, localhost:3031).
 -->
@@ -623,7 +629,7 @@ All checked 19 Oct 2026 in github.com/x402-foundation/x402:
 - typescript/packages/legacy/x402-*: README says "Deprecated (v1)... will only receive security patches. Please migrate to v2". npm has no deprecated flag, so `npm install x402-next` installs quietly. Even some solana.com guides (the Kora x402 guide) still show v1.
 - Network ids: v2 uses CAIP-2. Devnet solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1; mainnet solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp.
 - @x402/next README: withX402 "guarantees payment settlement only AFTER successful API responses (status < 400)"; paymentProxy "will charge clients for failed API responses". Also: "If a keyed pattern does not match... the handler runs without payment protection; withX402 logs a warning once."
-- Merchant USDC account: we hit this ourselves. The Solana "exact" scheme spec only allows compute-budget instructions, one TransferChecked, and Memo or Lighthouse instructions. There's no account-creation step, so the merchant's USDC account must already exist. We created it with `spl-token create-account <mint> --owner <merchant>`.
+- Merchant USDC account: we hit this ourselves. For normal wallets the spec's fast path allows only compute budget, one TransferChecked and Memo/Lighthouse. Nothing creates the merchant's account, so it must already exist. We created it with `spl-token create-account <mint> --owner <merchant>`.
 -->
 ---
 
@@ -685,13 +691,11 @@ layout: cover
 ]" />
 
 <!--
-TOBI: the repo URL is a placeholder until you approve publishing it. If you choose a different name, change it here and in the README.
-
 Leave this up during Q&A.
 
 Likely questions:
 - "Can I use this on mainnet?" Same code, mainnet USDC mint EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v, a paid RPC, a real database, and the x402 facilitator changed to one that supports mainnet (PayAI, or Coinbase CDP with a key). x402.org is testnet only.
 - "Why not Solana Pay?" It's a great fit for QR checkout at a counter. The spec is maintained, and @solana/pay 1.x is now built on kit 6. Same verification rules apply: its own spec says confirm and validate the transaction before releasing goods.
 - "Who pays the gas?" In our checkout, the customer pays the 5,000-lamport fee plus rent if the merchant's USDC account is new. In x402, the facilitator pays the fee.
-- "Is Alpenglow live?" Check on the morning: it was scheduled for epoch 1064, 21 Oct ~15:00 UTC.
+- "Is Alpenglow live?" Yes, since epoch 1064, 21 Oct ~13:36 UTC. 150 ms is the target, not yet a measured number.
 -->
