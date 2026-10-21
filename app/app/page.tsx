@@ -30,10 +30,11 @@ export default function Shop() {
   const [error, setError] = useState('')
   const [order, setOrder] = useState<OrderDTO | null>(null)
   const [sig, setSig] = useState('')
+  const [pendingCheck, setPending] = useState(false) // sent, but the server couldn't check it yet
   const busy = !['idle', 'paid', 'error'].includes(phase)
 
   async function pay(item: string) {
-    setActive(item); setError(''); setSig(''); setOrder(null); setFailedAt(null)
+    setActive(item); setError(''); setSig(''); setOrder(null); setFailedAt(null); setPending(false)
     let at: Phase = 'order'
     const go = (p: Phase) => { at = p; setPhase(p) }
     try {
@@ -53,18 +54,25 @@ export default function Shop() {
       setSig(s)
 
       go('verify')
+      let rpcBusy = false
       for (let i = 0; i < 8; i++) {
         const v = await fetch('/api/verify', { method: 'POST', body: JSON.stringify({ token: o.token, signature: s }) })
-        const body = (await v.json()) as { error?: string }
+        const body = (await v.json().catch(() => ({}))) as { error?: string; reason?: string }
         if (v.ok) {
           setPhase('paid')
           window.dispatchEvent(new Event(BALANCE_EVENT))
           return
         }
-        if (v.status !== 402 || !body.error?.startsWith('Transaction not found')) throw new Error(body.error)
+        // 503: the server couldn't reach Solana. The payment may be fine, so keep asking.
+        rpcBusy = v.status === 503
+        const notFound = v.status === 402 && body.error?.startsWith('Transaction not found')
+        if (!rpcBusy && !notFound) throw new Error(body.error ?? body.reason ?? `Server error ${v.status}`)
         await new Promise(r => setTimeout(r, 1500))
       }
-      throw new Error('The payment was sent but the server has not seen it yet. Check the explorer, then try again.')
+      if (rpcBusy) setPending(true)
+      throw new Error(rpcBusy
+        ? 'Solana RPC busy, try again. Your payment was sent: check the explorer before paying again.'
+        : 'The payment was sent but the server has not seen it yet. Check the explorer, then try again.')
     } catch (e) {
       setFailedAt(at)
       setPhase('error')
@@ -113,11 +121,11 @@ export default function Shop() {
         <aside aria-live="polite">
           <p className="panel-label">Your order</p>
           {phase === 'idle' ? (
-            <div className="empty"><b>Nothing ordered yet</b>Pick something on the left.</div>
+            <div className="empty"><b>Nothing ordered yet</b>Pick something from the menu.</div>
           ) : (
             <>
               {phase === 'error' && (
-                <div className="alert"><b>Payment not accepted</b>{error}</div>
+                <div className="alert"><b>{pendingCheck ? 'Not checked yet' : 'Payment not accepted'}</b>{error}</div>
               )}
               <div className="steps">
                 {STEPS.map(s => (

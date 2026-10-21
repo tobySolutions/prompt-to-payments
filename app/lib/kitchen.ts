@@ -4,7 +4,7 @@ import { fetchEncodedAccount, type Address } from '@solana/kit'
 import { findAssociatedTokenPda } from '@solana-program/token'
 import { MENU, MERCHANT_WALLET, USDC_MINT, rpc, type MenuItem } from './config'
 import { MEMO_RE } from './orders'
-import { fetchTx, memosOf, received } from './verify'
+import { fetchTx, isOrderMemo, memosOf, received } from './verify'
 
 export type KitchenOrder = {
   orderId: string
@@ -34,7 +34,9 @@ async function readOne(signature: string): Promise<KitchenOrder | null> {
   if (cache.has(signature)) return cache.get(signature)!
   const tx = await fetchTx(signature)
   if (!tx) return null // not visible to this RPC yet; try again next poll
-  const memo = memosOf(tx).map(m => MEMO_RE.exec(m)).find(Boolean)
+  // One payment, one order: a payment that names several orders counts for none.
+  const memos = memosOf(tx).filter(isOrderMemo)
+  const memo = memos.length === 1 ? MEMO_RE.exec(memos[0]) : null
   let result: KitchenOrder | null = null
   if (memo && memo[2] in MENU) {
     const item = memo[2] as MenuItem

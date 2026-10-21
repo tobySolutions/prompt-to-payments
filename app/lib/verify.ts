@@ -26,6 +26,9 @@ export async function fetchTx(sig: string): Promise<ParsedTx | null> {
 export const memosOf = (tx: ParsedTx) =>
   tx.transaction.message.instructions.filter(ix => ix.program === 'spl-memo').map(ix => String(ix.parsed))
 
+// Any memo in our format, valid or not. Used to count how many orders a payment names.
+export const isOrderMemo = (m: string) => m.startsWith('mamaput:')
+
 // How much of `mint` the `owner` received in this transaction, from balances.
 // Balances (not instruction args) also cover Token-2022 and transfers made inside other programs.
 export function received(tx: ParsedTx, mint: string, owner: string): bigint {
@@ -48,8 +51,11 @@ export async function verifyPayment(order: Order, sig: string): Promise<VerifyRe
   // 2. It must have succeeded. A failed transaction still has a signature.
   if (tx.meta?.err) return { ok: false, reason: 'Transaction failed on-chain' }
 
-  // 3. Its memo must name this order, so one payment maps to one order.
-  if (!memosOf(tx).includes(memoFor(order))) return { ok: false, reason: 'Memo does not match this order' }
+  // 3. Exactly one order memo, and it must be this order's. Extra memos for
+  // other orders would let one payment mark several orders paid.
+  const ours = memosOf(tx).filter(isOrderMemo)
+  if (ours.length > 1) return { ok: false, reason: 'One payment names more than one order' }
+  if (ours[0] !== memoFor(order)) return { ok: false, reason: 'Memo does not match this order' }
 
   // 4. The merchant's balance of the right mint must go up by the full price.
   const got = received(tx, order.mint, order.recipient)

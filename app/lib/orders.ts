@@ -18,7 +18,7 @@ export type Order = {
 
 export type OrderDTO = Omit<Order, 'amount'> & { amount: string; memo: string; token: string }
 
-const g = globalThis as unknown as { orderSecret?: Buffer; usedSignatures?: Set<string>; refused?: Refusal[] }
+const g = globalThis as unknown as { orderSecret?: Buffer; usedSignatures?: Map<string, string>; refused?: Refusal[] }
 // Set ORDER_SECRET in production. Locally a random one per process is fine.
 const secret = () => (process.env.ORDER_SECRET ? Buffer.from(process.env.ORDER_SECRET) : (g.orderSecret ??= randomBytes(32)))
 
@@ -35,7 +35,8 @@ export function createOrder(o: Omit<Order, 'id' | 'createdAt'>): OrderDTO {
 }
 
 // Returns the order only if the server signed it and nobody changed it.
-export function readOrder(token: string): Order | null {
+export function readOrder(token: unknown): Order | null {
+  if (typeof token !== 'string') return null
   const [payload, mac] = token.split('.')
   if (!payload || !mac) return null
   const want = Buffer.from(sign(payload)), got = Buffer.from(mac)
@@ -45,12 +46,13 @@ export function readOrder(token: string): Order | null {
 }
 
 // Belt and braces: the memo already binds a payment to one order, and this
-// catches the same signature twice on this server. In production: a UNIQUE column.
-export function claimSignature(sig: string): boolean {
-  const used = (g.usedSignatures ??= new Set())
-  if (used.has(sig)) return false
-  used.add(sig)
-  return true
+// remembers which order each signature paid, on this server. In production: a UNIQUE column.
+export function claimSignature(sig: string, orderId: string): 'new' | 'repeat' | 'other' {
+  const used = (g.usedSignatures ??= new Map())
+  const had = used.get(sig)
+  if (had) return had === orderId ? 'repeat' : 'other'
+  used.set(sig, orderId)
+  return 'new'
 }
 
 // Recent refusals, for the kitchen screen. Per server instance, not durable.

@@ -8,6 +8,7 @@ import {
   createTransactionMessage, getSignatureFromTransaction, pipe, sendAndConfirmTransactionFactory,
   setTransactionMessageFeePayerSigner, setTransactionMessageLifetimeUsingBlockhash, signTransactionMessageWithSigners,
 } from '@solana/kit'
+import { getAddMemoInstruction } from '@solana-program/memo'
 import { buildPayment, type OrderDTO } from '../lib/pay.ts'
 
 const BASE = process.env.BASE ?? 'http://localhost:3000'
@@ -19,8 +20,8 @@ const payer = await createKeyPairSignerFromBytes(new Uint8Array(JSON.parse(readF
 const post = (path: string, body: unknown) =>
   fetch(BASE + path, { method: 'POST', body: JSON.stringify(body) }).then(async r => ({ status: r.status, body: await r.json() }))
 
-async function payFor(order: OrderDTO) {
-  const instructions = await buildPayment(order, payer)
+async function payFor(order: OrderDTO, extraMemos: string[] = []) {
+  const instructions = [...(await buildPayment(order, payer)), ...extraMemos.map(memo => getAddMemoInstruction({ memo }))]
   const { value: blockhash } = await rpc.getLatestBlockhash().send()
   const msg = pipe(
     createTransactionMessage({ version: 0 }),
@@ -76,6 +77,18 @@ const cheap = await payFor({ ...e.body, amount: '500000' })
 const v4 = await verify(e.body, cheap)
 check('underpayment refused', v4.status === 402, v4)
 
+// One 2.50 payment carrying memos for three orders: none of them may count as paid.
+const mA = (await post('/api/orders', { item: 'jollof' })).body
+const mB = (await post('/api/orders', { item: 'jollof' })).body
+const mC = (await post('/api/orders', { item: 'suya' })).body
+const multi = await payFor(mA, [mB.memo, mC.memo])
+const mv = [await verify(mB, multi), await verify(mC, multi), await verify(mA, multi)]
+check('one payment with several order memos is refused', mv.every(r => r.status === 402), mv)
+
+// Bad input is a 400, not a crash.
+const bad = await post('/api/verify', { token: { x: 1 }, signature: sig })
+check('non-string token is a 400', bad.status === 400, bad)
+
 // The kitchen reads the chain and shows the real order as verified, the cheap one as not.
 let k: { status: number; body: any } = { status: 0, body: {} }
 for (let i = 0; i < 6; i++) {
@@ -87,6 +100,9 @@ const mine = k.body.orders?.find((o: any) => o.orderId === a.body.id)
 const under = k.body.orders?.find((o: any) => o.orderId === e.body.id)
 check('kitchen shows the paid order, verified', mine?.verified === true, k.body.orders?.slice(0, 3))
 check('kitchen marks the underpaid order unverified', under?.verified === false, under)
+
+const multiRows = k.body.orders?.filter((o: any) => o.signature === multi)
+check('kitchen ignores the multi-memo payment', Array.isArray(multiRows) && multiRows.length === 0, multiRows)
 
 console.log(failed ? `${failed} FAILED` : 'ALL PASS')
 process.exit(failed ? 1 : 0)
