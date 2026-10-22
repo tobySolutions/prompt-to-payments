@@ -109,13 +109,14 @@ Timing: 90 minutes. Build 15, Break 20, Fix 25, x402 20, checklist and questions
   <div v-click><span class="n">2</span><b>Devnet SOL</b><span><code>faucet.solana.com</code> · 2 requests per 8 hours</span></div>
   <div v-click><span class="n">3</span><b>Devnet USDC</b><span><code>faucet.circle.com</code> · Solana Devnet · 20 USDC every 2 hours, per address, per blockchain</span></div>
   <div v-click><span class="n">4</span><b>Node + an AI assistant</b><span>Node 22.18+ (24 recommended) · Claude Code, Cursor, Copilot, any</span></div>
+  <div v-click><span class="n">5</span><b>The repo <span class="muted">(optional)</span></b><span><code>github.com/tobySolutions/prompt-to-payments</code> · answers, the fixed app, the attack script</span></div>
 </div>
 
-<Callout v-click tone="warn" title="Faucet down?" class="mt-6">Pair with a neighbour, or use <span class="mono">mamaput-lagos.vercel.app</span>.</Callout>
+<Callout v-click tone="warn" title="Faucet down?" class="mt-3">Pair with a neighbour, or use <span class="mono">mamaput-lagos.vercel.app</span>.</Callout>
 
 <style>
-.setup { display: grid; gap: 0.7rem; margin-top: 1.2rem; }
-.setup > div { display: grid; grid-template-columns: 2.2rem 15rem minmax(0, 1fr); gap: 0.8rem; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 0.6rem; }
+.setup { display: grid; gap: 0.4rem; margin-top: 0.4rem; }
+.setup > div { display: grid; grid-template-columns: 2.2rem 15rem minmax(0, 1fr); gap: 0.8rem; align-items: baseline; border-bottom: 1px solid var(--line); padding-bottom: 0.35rem; }
 .setup .n { font-weight: 900; font-size: var(--fs-xl); color: var(--chain); font-stretch: 62%; }
 .setup b { font-size: var(--fs-md); }
 .setup span { font-size: var(--fs-base); color: var(--text-2); }
