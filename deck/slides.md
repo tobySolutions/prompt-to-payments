@@ -27,13 +27,19 @@ layout: cover
 ]" />
 
 <!--
-Timing: 23 minutes total. This slide up while people find seats. Get them to open their AI tool now.
+TIME: 0:00 · 20 seconds
 
-Say: "By the end of this session you'll have built a stablecoin payment app with an AI assistant, and you'll know exactly why the first version the AI gives you is not safe to ship. Then we make an API that charges per request, in USDC, with no checkout page."
+SAY
+- "Hi, I'm Tobi. In the next 23 minutes I'll show you an AI build a stablecoin payment app, show you why that first version would lose you money, fix it, and then watch an AI agent pay for an API by itself."
+- "You don't need to code along. Watch, and open the links I give you on your phone."
 
-Ask people to open their laptops now and join the Wi-Fi. Setup is the first thing we do.
+DO
+- Nothing to click. Move on after 20 seconds.
 
-Before you come (also at the top of the README): `git clone https://github.com/tobySolutions/prompt-to-payments && cd prompt-to-payments/app && npm i`. Say it again for anyone still installing: it saves the room's Wi-Fi.
+PRE-FLIGHT (before you walk on)
+- Press "Run the agent" on mamaput-lagos.vercel.app/agent until you see a proverb. The first run after a quiet spell can time out.
+- Phantom on devnet with USDC, open in your browser.
+- Tabs ready: mamaput-first-draft.vercel.app · mamaput-lagos.vercel.app/kitchen · mamaput-lagos.vercel.app/agent · editor on ai-first-draft/app/page.tsx · terminal in app/.
 -->
 ---
 
@@ -63,11 +69,12 @@ Before you come (also at the top of the README): `git clone https://github.com/t
 </style>
 
 <!--
-30 seconds. Don't read the slide. Click through the three lines and land on the last sentence; it's the thesis of the session.
+TIME: 0:20 · 40 seconds. Three clicks, one per line.
 
-Facts match tobysolutions.dev/resume (checked 19 Oct 2026): Senior Technical Lead at Boh since Sep 2026 (EKGO! for 500+ restaurants across California); Software Engineer, Solana Foundation, Solana Developer Platform, Jul to Oct 2026; co-founder of Solana Students Africa; Solana Turbine Q4 2025 graduate; DevRel Engineer at Fleek and Gaia AI; Million.js contributor (Million.js has 16K+ GitHub stars).
-
-Photo: your GitHub avatar, saved locally so it works offline.
+SAY
+- "I'm Senior Technical Lead at Boh, building EKGO! for restaurants in California."
+- "On the Solana side I co-founded Solana Students Africa, and until this week I was on the Solana Developer Platform at the Solana Foundation."
+- Last line, slowly: "I ship with AI every day. I read every line it writes that touches money. That's this whole talk."
 -->
 
 ---
@@ -81,7 +88,7 @@ Photo: your GitHub avatar, saved locally so it works offline.
   <div v-click class="x"><b>4</b><span>x402</span><em>Let an agent pay your API per request.</em><i>4 min</i></div>
 </div>
 
-<p v-click class="fs-md ink-soft mt-8">23 minutes. Build along with me the whole way.</p>
+<p v-click class="fs-md ink-soft mt-8">23 minutes. I drive. You follow on your phone.</p>
 
 <style>
 .plan { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 2rem; }
@@ -96,22 +103,24 @@ Photo: your GitHub avatar, saved locally so it works offline.
 </style>
 
 <!--
-You introduced yourself on the previous slide. Now: "We're going to build first and talk later. In five minutes your AI will be writing a payment app."
+TIME: 1:00 · 40 seconds. Four clicks, then the last line.
 
-Timing: 23 minutes. Build 8 (setup + 5-min prompt), Break 6, Fix 4, x402 4, close 1. Hidden slides (hide: true) are still in the file if there is extra time.
+SAY
+- "Four parts. Build: I prompt an AI and get a working payment app. Break: we find what it got wrong. Fix: the server checks the blockchain. Then x402: an AI agent paying an API, per request."
+- "I drive. You watch. Every app I show you is live, so you can open it on your phone."
 -->
 ---
 
-# Open these now
+# Follow along on your phone
 
 <div class="setup">
-  <div v-click><span class="n">1</span><b>Your AI assistant</b><span>Claude Code, Cursor, Copilot, ChatGPT, any of them. Open it now.</span></div>
-  <div v-click><span class="n">2</span><b>Your phone</b><span><code>mamaput-lagos.vercel.app</code> · the finished shop, kitchen and paying agent</span></div>
-  <div v-click><span class="n">3</span><b>To pay from your build</b><span>A wallet on <b class="chain">devnet</b> with two accounts (one is your shop) · <code>faucet.solana.com</code> · <code>faucet.circle.com</code></span></div>
-  <div v-click><span class="n">4</span><b>The repo <span class="muted">(optional)</span></b><span><code>github.com/tobySolutions/prompt-to-payments</code> · answers, the fixed app, the attack script</span></div>
+  <div v-click><span class="n">1</span><b>The AI's first draft</b><span><code>mamaput-first-draft.vercel.app</code> · what my AI built, unreviewed</span></div>
+  <div v-click><span class="n">2</span><b>The fixed shop</b><span><code>mamaput-lagos.vercel.app/kitchen</code> · only verified payments show up</span></div>
+  <div v-click><span class="n">3</span><b>The paying agent</b><span><code>mamaput-lagos.vercel.app/agent</code> · press Run when I do</span></div>
+  <div v-click><span class="n">4</span><b>All the code</b><span><code>github.com/tobySolutions/prompt-to-payments</code> · build it yourself later</span></div>
 </div>
 
-<Callout v-click tone="warn" title="No time for faucets?" class="mt-3">Build with your AI now, pay on your phone. Wire up your own wallet after the talk.</Callout>
+<Callout v-click tone="warn" title="No setup needed" class="mt-3">Everything I show is already built and live. Watch, poke at it, build it after.</Callout>
 
 <style>
 .setup { display: grid; gap: 0.4rem; margin-top: 0.4rem; }
@@ -122,28 +131,22 @@ Timing: 23 minutes. Build 8 (setup + 5-min prompt), Break 6, Fix 4, x402 4, clos
 </style>
 
 <!--
-Checked 19 Oct 2026:
-- faucet.solana.com: "Maximum of 2 requests every 8 hours". GitHub sign-in is optional and raises the limit.
-- faucet.circle.com: pick USDC, network "Solana Devnet". 20 USDC every 2 hours, per address, per blockchain. No account needed. It uses reCAPTCHA, so it can't be scripted.
-- Devnet USDC mint: 4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU (classic Token program, 6 decimals, read on-chain).
+TIME: 1:40 · 30 seconds. Leave it up so people can type or snap the links.
 
-Wallet setup: people need TWO accounts, a customer and a shop. Paying yourself fails on purpose: the server checks the merchant's balance went up by the price, and if payer and merchant are the same wallet it goes up by 0. Phantom devnet: Settings -> Developer Settings -> Testnet Mode -> Solana Devnet. Add the second account from the account switcher.
-
-If spare devnet wallets were funded the night before, say so here and hand them out. Otherwise: pair with a neighbour, or use the hosted shop at mamaput-lagos.vercel.app.
-
-Give this 90 seconds, not more. Nobody needs to finish the faucets now: they can build with their AI and pay on mamaput-lagos.vercel.app from their phone. Paying from their own build can happen after the talk.
+SAY
+- "Three links. The AI's first draft. The fixed shop with its kitchen screen. And the agent page, where an AI pays for an API."
+- "All the code is in the repo if you want to build it yourself later. No setup needed today."
 -->
 ---
 clicks: 2
 ---
 
-# Open your AI tool. Paste this.
+# The prompt I gave my AI
 
 <PromptBox class="mt-6" :typed="$clicks >= 1" text="Build a Next.js app where a customer connects a Solana wallet and pays 2.50 USDC on devnet for a jollof rice order. Show a success message when they've paid. The merchant wallet is <your second account's address>." />
 
 <div class="go mt-8">
-  <Countdown :minutes="5" :run="$clicks >= 2" />
-  <p class="fs-md ink-soft">Get your AI writing. Raise your hand when it shows you the payment code.</p>
+  <p v-click class="fs-lg">About four minutes later: a working app.</p>
 </div>
 
 <style>
@@ -151,20 +154,15 @@ clicks: 2
 </style>
 
 <!--
-Click 1 types the prompt. Click 2 starts a 5-minute timer (click the timer itself to pause it). While it runs, build it yourself on the projector; at 5:00 move on whether or not people are done.
+TIME: 2:10 · 1 minute. Click 1 types the prompt. Click 2 shows the last line.
 
-This is deliberately a normal, slightly lazy prompt. It's what people actually type. They should put their SECOND account's address as the merchant, so they can see the money arrive. Paying from and to the same account shows a balance change of 0 and the reviewed app refuses it.
+SAY
+- "Here's the prompt I gave my AI. Nothing clever. It's what most of us would type."
+- Read it out as it types.
+- "About four minutes later I had a working app."
 
-Say: "Your AI's mint should be 4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU. Anything else is bug #0." 
-
-While they work, build it yourself on the projector in a fresh folder, live, with your own AI tool. If your live build stalls (Wi-Fi, rate limits), switch to the pre-built one: `cd ai-first-draft && npm run dev`.
-
-Walk the room. Common snags:
-- Wallet on mainnet instead of devnet: balances show 0.
-- No devnet USDC: faucet.circle.com, or pair with a neighbour.
-- 429 errors: public devnet RPC rate limit, shared by everyone on the venue Wi-Fi. Retry, or use your own RPC key in SOLANA_RPC_URL / NEXT_PUBLIC_SOLANA_RPC_URL.
-
-People will get different stacks from different assistants. Good: the review works on all of them.
+FACT
+- A fresh Claude Sonnet, given only this prompt, wrote it on 19 Oct 2026. Unedited, in the repo under ai-first-draft/.
 -->
 ---
 
@@ -192,15 +190,19 @@ People will get different stacks from different assistants. Good: the review wor
 </style>
 
 <!--
-This is a real first draft. An AI assistant (Claude Sonnet, run as a fresh assistant with only this prompt) produced it on 19 Oct 2026. The code is in the repo under ai-first-draft/. Nothing was edited.
+TIME: 3:10 · 2 minutes. This is your first live demo.
 
-Versions it chose: next 15.5.28, @solana/web3.js 1.99.0, @solana/spl-token 0.4.15, @solana/wallet-adapter-react 0.15.40, wallet-adapter-wallets 0.19.40. `npx tsc --noEmit` passed.
+DO
+- Switch to the browser: mamaput-first-draft.vercel.app
+- Connect Phantom (devnet). Press pay. Approve. Show "Payment successful! Your jollof rice is on the way."
+- Back to the slide, click through the lines.
 
-Ask the room: "Whose works? Whose shows the success message?" Most hands go up.
+SAY
+- "It builds. It connects my wallet. It moves real devnet USDC. It says payment successful."
+- "Hands up if you'd ship this." Pause. "Let's check."
 
-Then: "Good. Now let's find out if it's right."
-
-Verified so far: the draft passes `tsc --noEmit` and `next build`. A click-through with a real Phantom wallet is not verified yet; do it before presenting (`cd ai-first-draft && npm run dev`, wallet on devnet with USDC) before saying "it works" from experience.
+IF IT BREAKS
+- Phantom won't connect, or no USDC: don't debug on stage. "It worked this morning." Click through the slide; the receipt shows what came back.
 -->
 ---
 layout: section
@@ -251,7 +253,7 @@ This is the shape of every correct stablecoin payment on Solana. Keep it in mind
 -->
 ---
 layout: live
-where: Editor · app/page.tsx
+where: Editor · ai-first-draft/app/page.tsx
 ---
 
 # Read it like the money is yours
@@ -262,7 +264,6 @@ where: Editor · app/page.tsx
   <p v-click><b>3</b>Two people pay 2.50 at once. Which jollof is whose?</p>
 </div>
 
-<div v-click class="timer-gap"><Countdown :minutes="2" :run="$clicks >= 4" /></div>
 
 <style>
 .qs { display: grid; gap: 1rem; margin-top: 1rem; }
@@ -271,14 +272,13 @@ where: Editor · app/page.tsx
 </style>
 
 <!--
-The room's first review. Switch to your editor and open the AI's page.tsx (the pre-built one is ai-first-draft/app/page.tsx). Give everyone 2 minutes to answer the three questions about THEIR OWN generated code, then take two or three answers out loud.
+TIME: 5:10 · 3 minutes. Switch to your editor: ai-first-draft/app/page.tsx. Click one question at a time, then point at the line.
 
-Answers in the reference draft:
-1. The browser. After confirmTransaction it calls setStatus("paid"). No server ever hears about it. Anyone can flip that state in React DevTools.
-2. A constant in client code: const AMOUNT = 2_500_000. The customer controls it.
-3. Nobody can tell. There's no order id on the payment.
-
-Point at the lines in the editor while people answer. That's more engaging than any code slide. (Code slides for each bug are in the backup deck (`npm run backup`, localhost:3031).)
+SAY
+- Q1, point at line 45, setStatus("paid"): "Who decides the order is paid? The browser. After the transaction confirms, it just sets 'paid'. No server ever checks. Anyone can flip that in their browser's dev tools."
+- Q2, point at line 21, const AMOUNT = 2_500_000: "Where does 2.50 come from? A number sitting in the browser code. The customer controls the price."
+- Q3: "Two people pay 2.50 at the same time. Which jollof is whose? Nobody can tell. There's no order id on the payment."
+- "Three bugs. All in the money logic. None of them is a blockchain bug."
 -->
 ---
 
@@ -310,11 +310,12 @@ Point at the lines in the editor while people answer. That's more engaging than 
 </style>
 
 <!--
-Be fair to the AI. The on-chain part is mostly fine. It picked transferChecked, an idempotent account create, the right mint and decimals. Two years ago assistants got these wrong all the time.
+TIME: 8:10 · 1.5 minutes. Clicks reveal both columns.
 
-What it got wrong is the money part: who decides an order is paid, who sets the price, and how you tie a payment to an order. These aren't Solana trivia. They're the same rules a bank or Paystack integration follows, and the AI skipped them because the prompt said "show a success message", so it did exactly that.
-
-That's the main lesson: the AI answers the prompt you wrote, not the system you need.
+SAY
+- "To be fair to the AI, the blockchain part is good. Right USDC mint, the safe transfer instruction, it even creates the shop's account properly."
+- "What it got wrong is the money logic. Who decides it's paid, who sets the price, which order is which. These aren't Solana problems. A Paystack integration has the same rules."
+- "The AI answered the prompt I wrote, not the system I needed."
 -->
 ---
 clicks: 6
@@ -325,15 +326,18 @@ clicks: 6
 <ChainChanges :step="$clicks" />
 
 <!--
-Checked 19 to 21 Oct 2026 against solana.com, npm and the chain itself:
-- Rent: SIMD-0437 cuts lamports-per-byte from 6,960 to 696 in five steps. Steps 1 and 2 hit mainnet in September 2026; steps 3 to 5 are expected with Agave 4.4 in November. Measured today: a token account costs 1,488,440 lamports. https://solana.com/upgrades/reduced-rent
-- v1 transactions (4,096 bytes) live on mainnet since 15 Sep 2026. Server code calling getTransaction without maxSupportedTransactionVersion: 1 errors on them.
-- 200 ms slots on mainnet since 9 Oct 2026. Blockhash still lasts 150 blocks, which is now ~30 s instead of ~60 s. Measured mainnet slot time 21 Oct: ~0.21 s. https://solana.com/upgrades/reduced-slot-times
-- Since 14 Jul 2026 (commit 43233c0, still in v2.7.0 checked 19 Oct): the Solana Foundation's dev skill for AI agents (github.com/solana-foundation/solana-dev-skill) says "Do not use @solana/client / @solana/react-hooks (framework-kit) for new work — that stack is stale... Do not use @solana/wallet-adapter-* for new apps either; Wallet Standard discovery covers modern wallets."
-- @solana/web3.js: npm "latest" moved to 3.1.1 on 19 Oct 2026, so `npm i @solana/web3.js` now installs v3, a different API rebuilt on Kit. AI-written v1 code must pin ^1.x (the draft pinned ^1.98.0 and got 1.99.0).
-- Alpenglow went LIVE on mainnet at the start of epoch 1064, Wed 21 Oct 2026 ~13:36 UTC (consensus handoff ~13:54 UTC): yesterday, from the room's point of view. Finality target ~150 ms, down from ~12.8 s. solana.com: "confirmed and finalized now describe the same state." 150 ms is the target, not yet a measured number. https://solana.com/upgrades/alpenglow
+TIME: 9:40 · 1 minute. Clicks reveal rows. Don't read them all.
 
-Say: "Every model in this room was trained before at least one of these. That's not the model's fault. It's why you review."
+SAY
+- "One more reason to review: Solana keeps moving."
+- "Since Monday, npm install @solana/web3.js gives you version 3, a different API. Yesterday afternoon Alpenglow went live on mainnet."
+- "Your AI was trained before all of this. That's not its fault. It's why you review."
+
+IF YOU'RE BEHIND
+- Skip this slide.
+
+FACTS
+- web3.js latest = 3.1.1 since 19 Oct 2026 (npm). Alpenglow live on mainnet since epoch 1064, 21 Oct ~13:36 UTC (solana.com/upgrades/alpenglow).
 -->
 ---
 hide: true
@@ -387,20 +391,17 @@ clicks: 7
 ]" />
 
 <!--
-Click through each arrow.
+TIME: 10:40 · 2 minutes. Seven clicks, one per arrow.
 
-1. The browser says only WHAT it wants: an item.
-2. The server answers with everything that matters: a fresh order id, the price in base units, the mint, the merchant address, the token program, signed into a token. The client can't change any of these.
-3. The browser builds the three instructions and the wallet signs.
-4. The transaction goes to Solana.
-5. The browser hands the server the signed order token and the signature. The signature is just a pointer; the server trusts nothing about it.
-6. The server fetches that transaction from its own RPC.
-7. The server runs its checks. Only then is the order paid.
+SAY
+- "The fix is one rule: the server checks the chain, never the browser."
+- Arrows 1–2: "The browser only asks for an item. The server sets the price and creates an order with an id."
+- Arrows 3–4: "The wallet signs the payment, with that order id written into a memo on the transaction."
+- Arrows 5–7: "Then the server fetches the transaction from Solana itself and checks it: it succeeded, right token, right shop, the full amount, and the memo matches this order. Only then is it paid."
+- "The exact prompt to make your AI build this is in the repo README."
 
-This is the reference app: app/lib/verify.ts, app/app/api/orders/ and app/app/api/verify/.
-
-23-minute version: there is no fix timer. Say: "Take this prompt home and give it to your AI:" then read it out. It is also in the repo README under "The fix prompt":
-"Move the price to the server. Add POST /api/orders that returns an order id, price in base units, mint and merchant. Add the order id as an SPL memo. Add POST /api/verify that takes { token, signature }, fetches the transaction with getTransaction and checks it succeeded, the memo matches, and the merchant's USDC balance rose by the full price. Refuse a signature that was already used."
+FACT
+- Real code: app/lib/verify.ts in the repo.
 -->
 ---
 hide: true
@@ -474,13 +475,13 @@ where: Terminal · app/
   <div>
 
 ```bash
-npm run dev
-node scripts/e2e.ts
+BASE=https://mamaput-lagos.vercel.app \
+  node scripts/e2e.ts
 ```
 
-  <p v-click class="fs-md mt-6">Real devnet transactions (a 6-decimal test token standing in for USDC). Same routes the browser uses.</p>
+  <p v-click class="fs-md mt-6">Real devnet USDC, against the live shop. Same routes the browser uses.</p>
   <p v-click class="fs-md ok">Ask your AI to write the attacks, then make them fail.</p>
-  <p v-click class="fs-md">Watch them bounce on <span class="mono chain">localhost:3000/kitchen</span></p>
+  <p v-click class="fs-md">Watch them bounce on <span class="mono chain">mamaput-lagos.vercel.app/kitchen</span></p>
   </div>
   <Receipt title="e2e.ts · devnet" stamp="ALL PASS" :lines="[
     ['real payment verifies', 'PASS', 'ok'],
@@ -499,11 +500,22 @@ node scripts/e2e.ts
 </style>
 
 <!--
-Run it live in the reference app folder: `npm run dev` in one terminal, `node scripts/e2e.ts` in another. It pays on devnet with your CLI wallet (~/.config/solana/id.json, which must not be the MERCHANT_WALLET) and tries eight attacks, then checks the kitchen: 13 checks in app/scripts/e2e.ts, ALL PASS on 21 Oct 2026. Set SOLANA_RPC_URL (and SOLANA_WS_URL) to use your own RPC. Keep localhost:3000/kitchen open on the projector while it runs: the underpaid order shows up red and the refusals list fills. Refusals are kept per server instance, so the hosted kitchen won't show your local run.
+TIME: 12:40 · 2.5 minutes. Second live demo.
 
-The receipt on the slide is the fallback if the network dies mid-demo.
+DO
+- Terminal, in app/: BASE=https://mamaput-lagos.vercel.app node scripts/e2e.ts
+- Put mamaput-lagos.vercel.app/kitchen next to it. "Open the kitchen on your phone."
 
-The habit to leave them with: "Write a script that tries to get this order marked paid without paying the full price." AI is very good at writing attacks. It's how you find out whether its own fix holds.
+SAY
+- "Now I attack the fixed shop. Real devnet USDC, against the live site you have on your phone."
+- As the lines pass: "A real payment: accepted. Same signature for a different order: refused. A made-up signature: refused. Sending my own price: ignored. Paying 0.50 for a 2.50 order: refused. One payment naming three orders: refused."
+- "Thirteen checks, all pass. Ask your AI to write attacks against its own code. It's very good at it."
+
+IF IT BREAKS
+- Slow network: point at the receipt on the slide. It's the real result from this morning: 13 of 13 against the live shop.
+
+COST
+- Each run spends 3.00 devnet USDC from the CLI wallet (AMX5…6DoC). Top it up at faucet.circle.com before the talk.
 -->
 ---
 layout: section
@@ -532,11 +544,11 @@ When the customer is a program, not a person.
 </style>
 
 <!--
-Checked 19 Oct 2026 on rfc-editor.org:
-- RFC 2068 (HTTP/1.1, January 1997), section 10.4.3: "402 Payment Required. This code is reserved for future use."
-- RFC 9110 (HTTP Semantics, June 2022), section 15.5.3: "The 402 (Payment Required) status code is reserved for future use."
+TIME: 15:10 · 40 seconds.
 
-x402 was created by Coinbase (the repo dates from Feb 2025) and moved to the x402 Foundation under the Linux Foundation in 2026. The canonical repo is now github.com/x402-foundation/x402.
+SAY
+- "Last part. HTTP has had a status code called 402 Payment Required since 1997. The spec still says 'reserved for future use'."
+- "x402 is that future: paying for things inside HTTP itself."
 -->
 ---
 clicks: 8
@@ -561,20 +573,13 @@ clicks: 8
 ]" />
 
 <!--
-x402 v2 (specs/x402-specification-v2.md, v2.0 dated 9 Dec 2025; headers in specs/transports-v2/http.md, x402-foundation repo). Default "authorization" flow:
+TIME: 15:50 · 1.5 minutes. Eight clicks, one per arrow.
 
-1. Agent calls the API like normal.
-2. API answers 402 with a PAYMENT-REQUIRED header (base64 JSON): what it costs, which token, which network, who to pay.
-3. Agent signs a USDC transferChecked. On Solana it's a partially signed transaction; the facilitator will add the fee payer's signature.
-4. Agent retries the same request with a PAYMENT-SIGNATURE header.
-5. API asks the facilitator to /verify it (read-only).
-6. API runs the handler.
-7. API asks the facilitator to /settle: it adds its fee-payer signature and submits the transaction to Solana.
-8. API returns 200 with the data and a PAYMENT-RESPONSE header carrying the transaction signature.
-
-The agent needs USDC but no SOL. The facilitator pays the network fee.
-
-v1 used different header names: X-PAYMENT and X-PAYMENT-RESPONSE. Most AI code you'll see still uses v1.
+SAY
+- "An agent calls an API. The API answers 402: pay a tenth of a cent in USDC, here's where."
+- "The agent signs a USDC payment and calls again with it attached."
+- "A facilitator checks the payment, the API answers, and the payment settles on Solana."
+- "No account. No API key. The agent doesn't even need SOL for fees."
 -->
 ---
 layout: live
@@ -604,16 +609,22 @@ API_URL=https://mamaput-x402.vercel.app/proverb npm run agent
 </style>
 
 <!--
-Live in x402/. The clicks are what to point at on screen.
+TIME: 17:20 · 2.5 minutes. Third live demo.
 
-- `curl -i` shows the 402 and the PAYMENT-REQUIRED header (base64 JSON). Windows: use `curl.exe -i`. Decode it for the room: `curl -si https://mamaput-x402.vercel.app/proverb | grep -i '^payment-required:' | cut -d' ' -f2 | tr -d '\r' | base64 -d`
-- The agent signs $0.001 USDC, retries and gets the proverb. It needs a Solana CLI keypair (~/.config/solana/id.json, or AGENT_KEYPAIR_PATH) with devnet USDC. No CLI? Use mamaput-lagos.vercel.app/agent. PowerShell: `$env:API_URL="https://mamaput-x402.vercel.app/proverb"; npm run agent`
-- The agent's wallet needs devnet USDC but no SOL. The x402.org facilitator pays the fee.
-- The merchant (PAY_TO) must already have a devnet USDC token account. The x402 Solana scheme doesn't let the payer create one.
+DO
+- Browser: mamaput-lagos.vercel.app/agent. Press "Run the agent". Tell the room to press it on their phones too.
+- Optional, in a terminal: curl -i https://mamaput-x402.vercel.app/proverb (shows the 402).
 
-STATUS (22 Oct 2026): a full paid run works end to end on the hosted agent page (6 steps, settled on devnet, 200 OK with a proverb). The first request after a quiet spell can time out while the server wakes up and reaches the facilitator: press Run once before the session starts, and if it fails on stage, just press it again. The agent wallet holds about 1 USDC, enough for roughly a thousand runs.
+SAY, as the steps appear
+- "It asked for a proverb. Got a 402 with the price. Signed a USDC payment. Asked again with the payment. The facilitator settled it on Solana. And there's the proverb."
+- "That's an AI paying for an API, per request, with no human in the loop."
 
-Fallback slides with the decoded JSON, the server code and the agent code are in the backup deck (`npm run backup`, localhost:3031).
+IF IT BREAKS
+- First press times out: the server was asleep. Press again.
+- "Already running": someone else pressed it. Wait a few seconds.
+
+FACT
+- Paid runs verified on 22 Oct 2026. The agent wallet holds about 1 USDC, roughly 1,000 runs.
 -->
 ---
 hide: true
@@ -671,18 +682,12 @@ All checked 19 Oct 2026 in github.com/x402-foundation/x402:
 </style>
 
 <!--
-This is the take-home. It's also in the repo as CHECKLIST.md.
+TIME: 19:50 · 1.5 minutes. Click through quickly; don't read every line.
 
-Each line maps to a bug we saw today:
-1, 2: bug 1 and 2 (browser decides, browser prices)
-3, 4: the verify function
-5, 6: which jollof, and replay
-7: the 2.01 widget
-8: bug 5 (token program)
-9: my AI's made-up Token-2022 address
-10: the RPC URL slide
-11: e2e.ts
-12: the x402 section
+SAY
+- "If you take one thing home, take this. Before AI-written payment code ships:"
+- "The server sets the price. The server checks the chain. Amounts are integers, never floats. Addresses come from packages, never the model's memory. And you attack it before your users do."
+- "It's CHECKLIST.md in the repo."
 -->
 ---
 layout: cover
@@ -705,11 +710,14 @@ layout: cover
 ]" />
 
 <!--
-Leave this up during Q&A.
+TIME: 21:20 · then Q&A.
 
-Likely questions:
-- "Can I use this on mainnet?" Same code, mainnet USDC mint EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v, a paid RPC, a real database, and the x402 facilitator changed to one that supports mainnet (PayAI, or Coinbase CDP with a key). x402.org is testnet only.
-- "Why not Solana Pay?" It's a great fit for QR checkout at a counter. The spec is maintained, and @solana/pay 1.x is now built on kit 6. Same verification rules apply: its own spec says confirm and validate the transaction before releasing goods.
-- "Who pays the gas?" In our checkout, the customer pays the 5,000-lamport fee plus rent if the merchant's USDC account is new. In x402, the facilitator pays the fee.
-- "Is Alpenglow live?" Yes, since epoch 1064, 21 Oct ~13:36 UTC. 150 ms is the target, not yet a measured number.
+SAY
+- "Thank you. The slides, the code and all three live apps are in the repo. I'm tobySolutions everywhere."
+
+LIKELY QUESTIONS
+- "Can I use this on mainnet?" Same code with the mainnet USDC mint, a paid RPC, a real database, and a facilitator that supports mainnet (x402.org is testnet only).
+- "Why not Solana Pay?" Great for QR checkout at a counter. The same rule applies: confirm the transaction on your server before releasing the food.
+- "Who pays the fees?" In the shop, the customer pays the network fee. In x402, the facilitator pays it.
+- "Is Alpenglow live?" Yes, since 21 Oct. 150 ms finality is the target, not a measured number yet.
 -->
