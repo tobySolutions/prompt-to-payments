@@ -38,8 +38,8 @@ DO
 
 PRE-FLIGHT (before you walk on)
 - Press "Run the agent" on mamaput-lagos.vercel.app/agent until you see a proverb. The first run after a quiet spell can time out.
-- Phantom on devnet with USDC, open in your browser.
-- Tabs ready: mamaput-first-draft.vercel.app · mamaput-lagos.vercel.app/kitchen · mamaput-lagos.vercel.app/agent · editor on ai-first-draft/app/page.tsx · terminal in app/.
+- Solflare on Devnet (switch the network in Solflare's settings) with devnet USDC from faucet.circle.com, unlocked in your browser.
+- Tabs ready: mamaput-first-draft.vercel.app · mamaput-lagos.vercel.app/kitchen · mamaput-lagos.vercel.app/agent · terminal in app/ (only for the attack demo).
 -->
 ---
 
@@ -178,7 +178,7 @@ FACT
     ['Time', 'about 4 min'],
   ]" stamp="IT BUILDS" />
   <div>
-    <p v-click class="fs-lg">Connect Phantom. Click pay. Approve.</p>
+    <p v-click class="fs-lg">Connect wallet. Click pay. Approve.</p>
     <p v-click class="fs-lg ok">"Payment successful! Your jollof rice is on the way."</p>
     <p v-click class="fs-xl" style="font-weight:800; margin-top:1.5rem">So we ship it?</p>
     <p v-click class="fs-sm ink-soft" style="margin-top:0.8rem">Try it on your phone: <span class="mono chain">mamaput-first-draft.vercel.app</span></p>
@@ -194,7 +194,7 @@ TIME: 3:10 · 2 minutes. This is your first live demo.
 
 DO
 - Switch to the browser: mamaput-first-draft.vercel.app
-- Connect Phantom (devnet). Press pay. Approve. Show "Payment successful! Your jollof rice is on the way."
+- Click "Select Wallet", pick Solflare, approve the connection. Press pay. Approve in Solflare. Show "Payment successful! Your jollof rice is on the way."
 - Back to the slide, click through the lines.
 
 SAY
@@ -202,7 +202,7 @@ SAY
 - "Hands up if you'd ship this." Pause. "Let's check."
 
 IF IT BREAKS
-- Phantom won't connect, or no USDC: don't debug on stage. "It worked this morning." Click through the slide; the receipt shows what came back.
+- Solflare won't connect, it's on mainnet, or no USDC: don't debug on stage. "It worked this morning." Click through the slide; the receipt shows what came back.
 -->
 ---
 layout: section
@@ -252,33 +252,50 @@ This is the shape of every correct stablecoin payment on Solana. Keep it in mind
 4. A Solana transaction is atomic. If the transfer fails, the account creation is rolled back too. The base fee is 5,000 lamports per signature.
 -->
 ---
-layout: live
-where: Editor · ai-first-draft/app/page.tsx
+clicks: 3
 ---
 
 # Read it like the money is yours
 
 <div class="qs">
-  <p v-click><b>1</b>Who decides the order is paid?</p>
-  <p v-click><b>2</b>Where does the 2.50 come from?</p>
-  <p v-click><b>3</b>Two people pay 2.50 at once. Which jollof is whose?</p>
+  <div v-click="1" class="q">
+    <p><b>1</b>Who decides the order is paid?</p>
+    <pre class="code">await connection.confirmTransaction(…)
+setStatus("paid")  <span class="hl">← the browser does</span></pre>
+  </div>
+  <div v-click="2" class="q">
+    <p><b>2</b>Where does the 2.50 come from?</p>
+    <pre class="code">const AMOUNT = 2_500_000  <span class="hl">← the browser sets the price</span></pre>
+  </div>
+  <div v-click="3" class="q">
+    <p><b>3</b>Two people pay 2.50 at once. Which jollof is whose?</p>
+    <pre class="code">tx.add(createAccount…, transferChecked…)  <span class="hl">← no order id. Nobody knows.</span></pre>
+  </div>
 </div>
 
+<p class="muted fs-xs mono mt-4">ai-first-draft/app/page.tsx · lines 21, 37–45 · unedited</p>
 
 <style>
-.qs { display: grid; gap: 1rem; margin-top: 1rem; }
-.qs p { display: grid; grid-template-columns: 2.6rem minmax(0, 1fr); font-size: var(--fs-xl) !important; font-weight: 700; margin: 0 !important; }
-.qs b { color: var(--bug); font-weight: 900; font-stretch: 62%; }
+.qs { display: grid; gap: 0.9rem; margin-top: 0.4rem; }
+.q { display: grid; gap: 0.35rem; }
+.q p { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); font-size: var(--fs-lg) !important; font-weight: 700; margin: 0 !important; }
+.q b { color: var(--bug); font-weight: 900; font-stretch: 62%; }
+.q .code { margin: 0 0 0 2.4rem; font-family: var(--mono); font-size: var(--fs-sm); background: var(--ground-2); border: 1px solid var(--line); border-left: 4px solid var(--bug); border-radius: var(--r-sm); padding: 0.45rem 0.8rem; white-space: pre-wrap; color: var(--text); }
+.q .hl { color: var(--bug); font-weight: 600; }
 </style>
 
 <!--
-TIME: 5:10 · 3 minutes. Switch to your editor: ai-first-draft/app/page.tsx. Click one question at a time, then point at the line.
+TIME: 5:10 · 3 minutes. Three clicks. Each click shows a question and the real line from the AI's code. No editor needed.
 
 SAY
-- Q1, point at line 45, setStatus("paid"): "Who decides the order is paid? The browser. After the transaction confirms, it just sets 'paid'. No server ever checks. Anyone can flip that in their browser's dev tools."
-- Q2, point at line 21, const AMOUNT = 2_500_000: "Where does 2.50 come from? A number sitting in the browser code. The customer controls the price."
-- Q3: "Two people pay 2.50 at the same time. Which jollof is whose? Nobody can tell. There's no order id on the payment."
+- "Let's read it like the money is ours. Three questions."
+- Click 1: "Who decides the order is paid? The browser. Once the transaction confirms, it just sets 'paid'. No server checks anything. Anyone can flip that in their browser's dev tools."
+- Click 2: "Where does 2.50 come from? A number sitting in the browser code. The customer controls the price."
+- Click 3: "Two people pay 2.50 at the same time. Which jollof is whose? Nobody can tell. There's no order id on the payment."
 - "Three bugs. All in the money logic. None of them is a blockchain bug."
+
+FACT
+- Lines are from ai-first-draft/app/page.tsx, unedited: AMOUNT on line 21, the transaction on lines 37–40, setStatus("paid") on line 45. The "…" marks shortened arguments.
 -->
 ---
 
@@ -513,6 +530,7 @@ SAY
 
 IF IT BREAKS
 - Slow network: point at the receipt on the slide. It's the real result from this morning: 13 of 13 against the live shop.
+- Don't want to show a terminal at all? Skip the command: show the receipt on the slide and open mamaput-lagos.vercel.app/kitchen, which already lists this morning's verified order, the underpaid one and the refusals (refusals reset if the server restarts).
 
 COST
 - Each run spends about 5.50 devnet USDC from the CLI wallet AMX5b8Rwt5yZd3Zdyfa7QcL6BYvLPS1uUqZGVRbe6DoC (a 2.50 payment, a 0.50 underpay, a 2.50 multi-order payment). Top it up at faucet.circle.com (20 USDC) before the talk.

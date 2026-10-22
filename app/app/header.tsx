@@ -13,6 +13,9 @@ const LINKS = [
   ['/agent', 'Agent · x402'],
 ] as const
 
+// Solflare and Phantom first, so they always get a button when several wallets are installed.
+const rank = (name: string) => (name === 'Solflare' ? 0 : name === 'Phantom' ? 1 : 2)
+
 function WalletButton() {
   const wallets = useWallets(client)
   const connected = useConnectedWallet(client)
@@ -33,7 +36,7 @@ function WalletButton() {
   if (wallets.length === 0) return <span className="muted">No Solana wallet found</span>
   return (
     <div className="wallet">
-      {wallets.slice(0, 2).map(w => (
+      {[...wallets].sort((x, y) => rank(x.name) - rank(y.name)).slice(0, 3).map(w => (
         <button key={w.name} className="btn sm" onClick={() => connect(w)}>Connect {w.name}</button>
       ))}
     </div>
