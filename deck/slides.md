@@ -530,7 +530,7 @@ SAY
 
 IF IT BREAKS
 - Slow network: point at the receipt on the slide. It's the real result from this morning: 13 of 13 against the live shop.
-- Don't want to show a terminal at all? Skip the command: show the receipt on the slide and open mamaput-lagos.vercel.app/kitchen, which already lists this morning's verified order, the underpaid one and the refusals (refusals reset if the server restarts).
+- Don't want to show a terminal at all? Skip the command: show the receipt on the slide and open mamaput-lagos.vercel.app/kitchen, which lists this morning's verified order and the underpaid one, read from the chain. The refused list is empty until someone attacks it again (it lives in server memory).
 
 COST
 - Each run spends about 5.50 devnet USDC from the CLI wallet AMX5b8Rwt5yZd3Zdyfa7QcL6BYvLPS1uUqZGVRbe6DoC (a 2.50 payment, a 0.50 underpay, a 2.50 multi-order payment). Top it up at faucet.circle.com (20 USDC) before the talk.
