@@ -39,7 +39,7 @@ DO
 PRE-FLIGHT (before you walk on)
 - Press "Run the agent" on mamaput-lagos.vercel.app/agent until you see a proverb. The first run after a quiet spell can time out.
 - Solflare on Devnet (switch the network in Solflare's settings) with devnet USDC from faucet.circle.com, unlocked in your browser.
-- Tabs ready: mamaput-first-draft.vercel.app · mamaput-lagos.vercel.app/kitchen · mamaput-lagos.vercel.app/agent · terminal in app/ (only for the attack demo).
+- Tabs ready: mamaput-first-draft.vercel.app · mamaput-lagos.vercel.app/kitchen · mamaput-lagos.vercel.app/agent.
 -->
 ---
 
@@ -483,24 +483,19 @@ Common snags:
 -->
 ---
 layout: live
-where: Terminal · app/
+where: Browser · mamaput-lagos.vercel.app/kitchen
 ---
 
-# Now attack it
+# I attacked it
 
 <div class="atk">
   <div>
-
-```bash
-BASE=https://mamaput-lagos.vercel.app \
-  node scripts/e2e.ts
-```
-
-  <p v-click class="fs-md mt-6">Real devnet USDC, against the live shop. Same routes the browser uses.</p>
-  <p v-click class="fs-md ok">Ask your AI to write the attacks, then make them fail.</p>
-  <p v-click class="fs-md">Watch them bounce on <span class="mono chain">mamaput-lagos.vercel.app/kitchen</span></p>
+  <p v-click class="fs-lg">Eight attacks on the live shop, with real devnet USDC.</p>
+  <p v-click class="fs-lg ok mt-4">Every one refused.</p>
+  <p v-click class="fs-md mt-6">The kitchen only cooks what the chain proves: <span class="mono chain">mamaput-lagos.vercel.app/kitchen</span></p>
+  <p v-click class="fs-md ai mt-4">Ask your AI to attack its own code. It's very good at it.</p>
   </div>
-  <Receipt title="e2e.ts · devnet" stamp="ALL PASS" :lines="[
+  <Receipt title="ATTACKS · 22 OCT · DEVNET" stamp="ALL PASS" :lines="[
     ['real payment verifies', 'PASS', 'ok'],
     ['same signature, other order', 'refused', 'ok'],
     ['made-up signature', 'refused', 'ok'],
@@ -517,23 +512,24 @@ BASE=https://mamaput-lagos.vercel.app \
 </style>
 
 <!--
-TIME: 12:40 · 2.5 minutes. Second live demo.
+TIME: 12:40 · 2.5 minutes. Second demo: browser only.
 
 DO
-- Terminal, in app/: BASE=https://mamaput-lagos.vercel.app node scripts/e2e.ts
-- Put mamaput-lagos.vercel.app/kitchen next to it. "Open the kitchen on your phone."
+- Click through the slide (four lines). Point at the receipt.
+- Switch to the browser: mamaput-lagos.vercel.app/kitchen. "Open this on your phone."
+- Point at the two jollof orders: the 2.50 one is verified, the 0.50 underpayment is flagged as not verified. The kitchen reads these from Solana, not from the browser.
 
 SAY
-- "Now I attack the fixed shop. Real devnet USDC, against the live site you have on your phone."
-- As the lines pass: "A real payment: accepted. Same signature for a different order: refused. A made-up signature: refused. Sending my own price: ignored. Paying 0.50 for a 2.50 order: refused. One payment naming three orders: refused."
-- "Thirteen checks, all pass. Ask your AI to write attacks against its own code. It's very good at it."
+- "This morning I attacked the fixed shop. Real devnet USDC, against the same live site you have on your phone."
+- Point down the receipt: "A real payment: accepted. Same signature for a different order: refused. A made-up signature: refused. Sending my own price: ignored. Paying 0.50 for a 2.50 order: refused. One payment naming three orders: refused."
+- At the kitchen: "This screen only shows what the blockchain proves. The real 2.50 order is verified. The underpaid one is flagged. The kitchen doesn't cook it."
+- "Ask your AI to write attacks against its own code. It's very good at it. The attack script is in the repo."
 
 IF IT BREAKS
-- Slow network: point at the receipt on the slide. It's the real result from this morning: 13 of 13 against the live shop.
-- Don't want to show a terminal at all? Skip the command: show the receipt on the slide and open mamaput-lagos.vercel.app/kitchen, which lists this morning's verified order and the underpaid one, read from the chain. The refused list is empty until someone attacks it again (it lives in server memory).
+- Kitchen slow to load: stay on the slide. The receipt is the real result: 13 of 13 checks passed against the live shop this morning.
 
-COST
-- Each run spends about 5.50 devnet USDC from the CLI wallet AMX5b8Rwt5yZd3Zdyfa7QcL6BYvLPS1uUqZGVRbe6DoC (a 2.50 payment, a 0.50 underpay, a 2.50 multi-order payment). Top it up at faucet.circle.com (20 USDC) before the talk.
+FACT
+- Run on 22 Oct 2026: BASE=https://mamaput-lagos.vercel.app node app/scripts/e2e.ts, 13/13 ALL PASS, real payment tx 39TVbvuU… on devnet.
 -->
 ---
 layout: section
@@ -601,7 +597,7 @@ SAY
 -->
 ---
 layout: live
-where: Terminal · x402/
+where: Browser · mamaput-lagos.vercel.app/agent
 ---
 
 # Pay for a proverb
@@ -631,7 +627,6 @@ TIME: 17:20 · 2.5 minutes. Third live demo.
 
 DO
 - Browser: mamaput-lagos.vercel.app/agent. Press "Run the agent". Tell the room to press it on their phones too.
-- Optional, in a terminal: curl -i https://mamaput-x402.vercel.app/proverb (shows the 402).
 
 SAY, as the steps appear
 - "It asked for a proverb. Got a 402 with the price. Signed a USDC payment. Asked again with the payment. The facilitator settled it on Solana. And there's the proverb."
