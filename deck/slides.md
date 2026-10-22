@@ -292,6 +292,7 @@ SAY
 - Click 1: "Who decides the order is paid? The browser. Once the transaction confirms, it just sets 'paid'. No server checks anything. Anyone can flip that in their browser's dev tools."
 - Click 2: "Where does 2.50 come from? A number sitting in the browser code. The customer controls the price."
 - Click 3: "Two people pay 2.50 at the same time. Which jollof is whose? Nobody can tell. There's no order id on the payment."
+- Proof from this morning: "I paid 2.50 with this app before the talk. The money is in the shop's wallet. The kitchen has no idea whose jollof it is, because there's no order id." (Optional: show mamaput-lagos.vercel.app/kitchen; your 2.50 isn't listed.)
 - "Three bugs. All in the money logic. None of them is a blockchain bug."
 
 FACT
