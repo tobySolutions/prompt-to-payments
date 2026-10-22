@@ -1,6 +1,26 @@
 # Changelog
 
-## 21 Oct 2026 (branch `fix/audit-2026-10-21`)
+## 22 Oct 2026 (talk day, all on `main` and deployed)
+
+**Format:** a 23-minute, demo-led talk. Every demo is pre-built and hosted; the audience follows on their phones.
+
+**Shipped**
+- The 21 Oct fixes merged to `main` and deployed to all three sites.
+- The AI first draft is now hosted, unedited: https://mamaput-first-draft.vercel.app
+- Deck retimed for 23 minutes: 7 slides hidden (`hide: true`, still in `slides.md`), no timers, a "follow along on your phone" slide, the draft's code shown on the slide, and "I attacked it" with the live kitchen. Speaker notes rewritten as TIME / SAY / DO / IF IT BREAKS for every visible slide.
+- Shop: Solflare and Phantom are listed first among detected wallets.
+- README: "The fix prompt" section.
+
+**Verified on 22 Oct**
+- `BASE=https://mamaput-lagos.vercel.app node app/scripts/e2e.ts`: 13/13 against the live shop with Circle devnet USDC.
+- A full paid x402 run from the hosted agent page (402 → signed payment → settled on devnet → 200 with a proverb).
+- A real payment on the AI first draft with Solflare. It landed in the merchant's account with no memo, which is why the fixed kitchen can't tell whose order it was.
+
+**Known**
+- The first x402 run after a quiet spell can time out while the server reaches the facilitator. Press Run again.
+- The kitchen's "Refused" list is kept in server memory and resets on every deploy. Orders come from the chain.
+
+## 21 Oct 2026 (audit fixes, merged to `main` on 22 Oct)
 
 **Code**
 - Checkout: a payment must carry exactly one order memo; one payment naming several orders is refused (and ignored by the kitchen).
