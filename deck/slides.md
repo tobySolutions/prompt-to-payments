@@ -27,7 +27,7 @@ layout: cover
 ]" />
 
 <!--
-Timing: 90 minutes total. Walk-in music, this slide up while people find seats and plug in.
+Timing: 23 minutes total. This slide up while people find seats. Get them to open their AI tool now.
 
 Say: "By the end of this session you'll have built a stablecoin payment app with an AI assistant, and you'll know exactly why the first version the AI gives you is not safe to ship. Then we make an API that charges per request, in USDC, with no checkout page."
 
@@ -75,13 +75,13 @@ Photo: your GitHub avatar, saved locally so it works offline.
 # Build it. Break it. Fix it.
 
 <div class="plan">
-  <div v-click><b>1</b><span>Build</span><em>Prompt an AI. Get a working app.</em><i>15 min</i></div>
-  <div v-click class="rev"><b>2</b><span>Break</span><em>Find what it got wrong.</em><i>20 min</i></div>
-  <div v-click class="ship"><b>3</b><span>Fix</span><em>Make the server check the chain.</em><i>25 min</i></div>
-  <div v-click class="x"><b>4</b><span>x402</span><em>Let an agent pay your API per request.</em><i>20 min</i></div>
+  <div v-click><b>1</b><span>Build</span><em>Prompt an AI. Get a working app.</em><i>8 min</i></div>
+  <div v-click class="rev"><b>2</b><span>Break</span><em>Find what it got wrong.</em><i>6 min</i></div>
+  <div v-click class="ship"><b>3</b><span>Fix</span><em>Make the server check the chain.</em><i>4 min</i></div>
+  <div v-click class="x"><b>4</b><span>x402</span><em>Let an agent pay your API per request.</em><i>4 min</i></div>
 </div>
 
-<p v-click class="fs-md ink-soft mt-8">About half of the 90 minutes is hands-on.</p>
+<p v-click class="fs-md ink-soft mt-8">23 minutes. Build along with me the whole way.</p>
 
 <style>
 .plan { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 2rem; }
@@ -98,21 +98,20 @@ Photo: your GitHub avatar, saved locally so it works offline.
 <!--
 You introduced yourself on the previous slide. Now: "We're going to build first and talk later. In five minutes your AI will be writing a payment app."
 
-Timing: 90 minutes. Build 15, Break 20, Fix 25, x402 20, checklist and questions 10.
+Timing: 23 minutes. Build 8 (setup + 5-min prompt), Break 6, Fix 4, x402 4, close 1. Hidden slides (hide: true) are still in the file if there is extra time.
 -->
 ---
 
-# Get these before we prompt
+# Open these now
 
 <div class="setup">
-  <div v-click><span class="n">1</span><b>A wallet</b><span>Phantom, Solflare or Backpack on <b class="chain">devnet</b>. Add a second account: that one is your shop.</span></div>
-  <div v-click><span class="n">2</span><b>Devnet SOL</b><span><code>faucet.solana.com</code> · 2 requests per 8 hours</span></div>
-  <div v-click><span class="n">3</span><b>Devnet USDC</b><span><code>faucet.circle.com</code> · Solana Devnet · 20 USDC every 2 hours, per address, per blockchain</span></div>
-  <div v-click><span class="n">4</span><b>Node + an AI assistant</b><span>Node 22.18+ (24 recommended) · Claude Code, Cursor, Copilot, any</span></div>
-  <div v-click><span class="n">5</span><b>The repo <span class="muted">(optional)</span></b><span><code>github.com/tobySolutions/prompt-to-payments</code> · answers, the fixed app, the attack script</span></div>
+  <div v-click><span class="n">1</span><b>Your AI assistant</b><span>Claude Code, Cursor, Copilot, ChatGPT, any of them. Open it now.</span></div>
+  <div v-click><span class="n">2</span><b>Your phone</b><span><code>mamaput-lagos.vercel.app</code> · the finished shop, kitchen and paying agent</span></div>
+  <div v-click><span class="n">3</span><b>To pay from your build</b><span>A wallet on <b class="chain">devnet</b> with two accounts (one is your shop) · <code>faucet.solana.com</code> · <code>faucet.circle.com</code></span></div>
+  <div v-click><span class="n">4</span><b>The repo <span class="muted">(optional)</span></b><span><code>github.com/tobySolutions/prompt-to-payments</code> · answers, the fixed app, the attack script</span></div>
 </div>
 
-<Callout v-click tone="warn" title="Faucet down?" class="mt-3">Pair with a neighbour, or use <span class="mono">mamaput-lagos.vercel.app</span>.</Callout>
+<Callout v-click tone="warn" title="No time for faucets?" class="mt-3">Build with your AI now, pay on your phone. Wire up your own wallet after the talk.</Callout>
 
 <style>
 .setup { display: grid; gap: 0.4rem; margin-top: 0.4rem; }
@@ -132,7 +131,7 @@ Wallet setup: people need TWO accounts, a customer and a shop. Paying yourself f
 
 If spare devnet wallets were funded the night before, say so here and hand them out. Otherwise: pair with a neighbour, or use the hosted shop at mamaput-lagos.vercel.app.
 
-Give people 5 to 8 minutes here. Walk the room.
+Give this 90 seconds, not more. Nobody needs to finish the faucets now: they can build with their AI and pay on mamaput-lagos.vercel.app from their phone. Paying from their own build can happen after the talk.
 -->
 ---
 clicks: 2
@@ -143,8 +142,8 @@ clicks: 2
 <PromptBox class="mt-6" :typed="$clicks >= 1" text="Build a Next.js app where a customer connects a Solana wallet and pays 2.50 USDC on devnet for a jollof rice order. Show a success message when they've paid. The merchant wallet is <your second account's address>." />
 
 <div class="go mt-8">
-  <Countdown :minutes="10" :run="$clicks >= 2" />
-  <p class="fs-md ink-soft">Get it running. Pay for one jollof. Raise your hand when you see the success message.</p>
+  <Countdown :minutes="5" :run="$clicks >= 2" />
+  <p class="fs-md ink-soft">Get your AI writing. Raise your hand when it shows you the payment code.</p>
 </div>
 
 <style>
@@ -152,7 +151,7 @@ clicks: 2
 </style>
 
 <!--
-Click 1 types the prompt. Click 2 starts a 10-minute timer (click the timer itself to pause it).
+Click 1 types the prompt. Click 2 starts a 5-minute timer (click the timer itself to pause it). While it runs, build it yourself on the projector; at 5:00 move on whether or not people are done.
 
 This is deliberately a normal, slightly lazy prompt. It's what people actually type. They should put their SECOND account's address as the merchant, so they can see the money arrive. Paying from and to the same account shows a balance change of 0 and the reviewed app refuses it.
 
@@ -206,6 +205,7 @@ Verified so far: the draft passes `tsc --noEmit` and `next build`. A click-throu
 layout: section
 tone: bug
 num: 2
+hide: true
 ---
 
 # Break it
@@ -213,6 +213,7 @@ num: 2
 It works. That's a different question from whether it's correct.
 ---
 clicks: 4
+hide: true
 ---
 
 # One payment, three instructions
@@ -260,7 +261,7 @@ where: Editor · app/page.tsx
   <p v-click><b>3</b>Two people pay 2.50 at once. Which jollof is whose?</p>
 </div>
 
-<div v-click class="timer-gap"><Countdown :minutes="5" :run="$clicks >= 4" /></div>
+<div v-click class="timer-gap"><Countdown :minutes="2" :run="$clicks >= 4" /></div>
 
 <style>
 .qs { display: grid; gap: 1rem; margin-top: 1rem; }
@@ -269,7 +270,7 @@ where: Editor · app/page.tsx
 </style>
 
 <!--
-The room's first review. Switch to your editor and open the AI's page.tsx (the pre-built one is ai-first-draft/app/page.tsx). Give everyone 5 minutes to answer the three questions about THEIR OWN generated code, then take answers out loud.
+The room's first review. Switch to your editor and open the AI's page.tsx (the pre-built one is ai-first-draft/app/page.tsx). Give everyone 2 minutes to answer the three questions about THEIR OWN generated code, then take two or three answers out loud.
 
 Answers in the reference draft:
 1. The browser. After confirmTransaction it calls setStatus("paid"). No server ever hears about it. Anyone can flip that state in React DevTools.
@@ -334,6 +335,8 @@ Checked 19 to 21 Oct 2026 against solana.com, npm and the chain itself:
 Say: "Every model in this room was trained before at least one of these. That's not the model's fault. It's why you review."
 -->
 ---
+hide: true
+---
 
 # My AI got one wrong too
 
@@ -394,7 +397,12 @@ Click through each arrow.
 7. The server runs its checks. Only then is the order paid.
 
 This is the reference app: app/lib/verify.ts, app/app/api/orders/ and app/app/api/verify/.
+
+23-minute version: there is no fix timer. Say: "Take this prompt home and give it to your AI:" then read it out. It is also in the repo README under "The fix prompt":
+"Move the price to the server. Add POST /api/orders that returns an order id, price in base units, mint and merchant. Add the order id as an SPL memo. Add POST /api/verify that takes { token, signature }, fetches the transaction with getTransaction and checks it succeeded, the memo matches, and the merchant's USDC balance rose by the full price. Refuse a signature that was already used."
 -->
+---
+hide: true
 ---
 
 # Money is an integer
@@ -419,6 +427,7 @@ Rule: amounts are bigint base units end to end. Prices live as integers on the s
 layout: live
 where: Editor
 clicks: 6
+hide: true
 ---
 
 # Fix it
@@ -499,6 +508,7 @@ The habit to leave them with: "Write a script that tries to get this order marke
 layout: section
 tone: http
 num: 4
+hide: true
 ---
 
 # x402
@@ -604,6 +614,8 @@ STATUS (22 Oct 2026): a full paid run works end to end on the hosted agent page 
 
 Fallback slides with the decoded JSON, the server code and the agent code are in the backup deck (`npm run backup`, localhost:3031).
 -->
+---
+hide: true
 ---
 
 # What the AI gets wrong with x402

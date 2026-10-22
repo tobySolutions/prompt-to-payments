@@ -28,6 +28,14 @@ Phantom: Settings -> Developer Settings -> Testnet Mode -> Solana Devnet.
 
 Devnet only. Nothing here has been audited.
 
+## The fix prompt
+
+After the workshop, give this to your AI assistant to fix the app it wrote:
+
+> Move the price to the server. Add POST /api/orders that returns an order id, price in base units, mint and merchant. Add the order id as an SPL memo. Add POST /api/verify that takes { token, signature }, fetches the transaction with getTransaction and checks it succeeded, the memo matches, and the merchant's USDC balance rose by the full price. Refuse a signature that was already used.
+
+Then check the result against `CHECKLIST.md`, and ask it to write a script that attacks its own fix.
+
 ## Run the checkout
 
 ```bash
