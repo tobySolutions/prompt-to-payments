@@ -515,7 +515,7 @@ IF IT BREAKS
 - Slow network: point at the receipt on the slide. It's the real result from this morning: 13 of 13 against the live shop.
 
 COST
-- Each run spends 3.00 devnet USDC from the CLI wallet (AMX5…6DoC). Top it up at faucet.circle.com before the talk.
+- Each run spends about 5.50 devnet USDC from the CLI wallet AMX5b8Rwt5yZd3Zdyfa7QcL6BYvLPS1uUqZGVRbe6DoC (a 2.50 payment, a 0.50 underpay, a 2.50 multi-order payment). Top it up at faucet.circle.com (20 USDC) before the talk.
 -->
 ---
 layout: section
