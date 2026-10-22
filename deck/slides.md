@@ -599,7 +599,7 @@ Live in x402/. The clicks are what to point at on screen.
 - The agent's wallet needs devnet USDC but no SOL. The x402.org facilitator pays the fee.
 - The merchant (PAY_TO) must already have a devnet USDC token account. The x402 Solana scheme doesn't let the payer create one.
 
-STATUS (19 Oct 2026): the hosted service (mamaput-x402.vercel.app) and the hosted agent page are live and tested up to step 4. The paid retry needs devnet USDC in the hosted agent wallet 9MKM8N5ZaFDhFave7SR2uS4cBHjURCXemJHdEQYSXP1k. Check it has some and press Run once before presenting.
+STATUS (22 Oct 2026): a full paid run works end to end on the hosted agent page (6 steps, settled on devnet, 200 OK with a proverb). The first request after a quiet spell can time out while the server wakes up and reaches the facilitator: press Run once before the session starts, and if it fails on stage, just press it again. The agent wallet holds about 1 USDC, enough for roughly a thousand runs.
 
 Fallback slides with the decoded JSON, the server code and the agent code are in the backup deck (`npm run backup`, localhost:3031).
 -->
