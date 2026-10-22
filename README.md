@@ -24,7 +24,7 @@ Phantom: Settings -> Developer Settings -> Testnet Mode -> Solana Devnet.
 | `CHECKLIST.md` | The ship checklist from the last slides. |
 | `deck/prompt-to-payments.pdf` / `.pptx` | The slides as PDF and PowerPoint (speaker notes included in the .pptx) |
 
-**Live:** slides https://prompt-to-payments.vercel.app · shop https://mamaput-lagos.vercel.app (Shop, Kitchen, Agent · x402) · paid API https://mamaput-x402.vercel.app/proverb
+**Live:** slides https://prompt-to-payments.vercel.app · the AI's first draft, unreviewed https://mamaput-first-draft.vercel.app · reviewed shop https://mamaput-lagos.vercel.app (Shop, Kitchen, Agent · x402) · paid API https://mamaput-x402.vercel.app/proverb
 
 Devnet only. Nothing here has been audited.
 

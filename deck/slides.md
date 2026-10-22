@@ -183,6 +183,7 @@ People will get different stacks from different assistants. Good: the review wor
     <p v-click class="fs-lg">Connect Phantom. Click pay. Approve.</p>
     <p v-click class="fs-lg ok">"Payment successful! Your jollof rice is on the way."</p>
     <p v-click class="fs-xl" style="font-weight:800; margin-top:1.5rem">So we ship it?</p>
+    <p v-click class="fs-sm ink-soft" style="margin-top:0.8rem">Try it on your phone: <span class="mono chain">mamaput-first-draft.vercel.app</span></p>
   </div>
 </div>
 
